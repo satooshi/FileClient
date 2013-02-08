@@ -104,6 +104,8 @@ $client->walk(
 
 ## LTSV file
 
+Labeled Tab-separated Values (LTSV) file format is introduced by Hatena engineer ([blog post in Japanese](http://stanaka.hatenablog.com/entry/2013/02/05/214833)) and is variant TSV file format. You can find a suitable library for several programming language and see description at [ltsv.org](http://ltsv.org/).
+
 ```php
 $path = '/path/to/log.ltsv';
 $client = new LtsvFileClient($path);
