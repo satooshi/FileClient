@@ -49,6 +49,10 @@ $ git clone git@github.com:satooshi/FileClient.git
 
 ## plain text file
 ```php
+<?php
+
+use Contrib\Component\File\Client\FileClient;
+
 // construction
 $path = '/path/to/file';
 $client = new FileClient($path);
@@ -107,6 +111,10 @@ $client->walk(
 Labeled Tab-separated Values (LTSV) file format is introduced by Hatena engineer ([blog post in Japanese](http://stanaka.hatenablog.com/entry/2013/02/05/214833)) and is variant TSV file format. You can find a suitable library for several programming language and see description at [ltsv.org](http://ltsv.org/).
 
 ```php
+<?php
+
+use Contrib\Component\File\Client\LtsvFileClient;
+
 $path = '/path/to/log.ltsv';
 $client = new LtsvFileClient($path);
 
@@ -119,4 +127,48 @@ $client->write($content);
 
 // append LTSV items
 $client->append($content);
+```
+
+You can use parser/formatter itself. Parser example:
+
+```php
+<?php
+
+use Contrib\Component\File\FileType\Ltsv\Parser;
+
+// parse LTSV
+$line = "label1:value1\tlabel2:value2";
+$parser = new Parser();
+$items = $parser->parseLine($line);
+```
+
+result in:
+
+```
+array(2) {
+  'label1' =>
+  string(6) "value1"
+  'label2' =>
+  string(6) "value2"
+}
+
+```
+
+formatter example:
+
+```php
+<?php
+
+use Contrib\Component\File\FileType\Ltsv\Formatter;
+
+// format to LTSV
+$items = ['label1' => 'value1', 'label2' => 'value2'];
+$formatter = new Formatter();
+$line = $formatter->formatItems($items);
+```
+
+result in:
+
+```php
+"label1:value1\tlabel2:value2"
 ```
