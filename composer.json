@@ -1,5 +1,5 @@
 {
-    "name": "satooshi/FileClient",
+    "name": "satooshi/file-client",
     "description": "File reader/writer",
     "keywords": ["file"],
     "homepage": "https://github.com/satooshi/FileClient",
