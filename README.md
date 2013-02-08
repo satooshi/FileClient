@@ -1,7 +1,9 @@
 FileClient
 ==========
 
-FileClient for php (plain text, LTSV)
+FileClient for php (plain text, LTSV).
+
+FileClient object can read  from or write content to a file. And you can handle file read process for every line as you like by passing a callback or a closure to walk() method. This method is intended for database manipulation. For example, you can insert or update record from a read line.
 
 # Installation
 
@@ -44,8 +46,6 @@ $ git clone git@github.com:satooshi/FileClient.git
 ```
 
 # Usage
-
-FileClient object can read  from or write content to a file. And you can handle file read process for every line as you like by passing a callback or a closure to walk() method. This method is intended for database manipulation. For example, you can insert or update record from a read line.
 
 ## plain text file
 ```php
