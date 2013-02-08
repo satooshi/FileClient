@@ -39,26 +39,9 @@ class Writer extends LineWriter
     public function write($line, $length = null)
     {
         if (is_array($line)) {
-            return parent::write($this->asLtsvLine($line), $length);
+            return parent::write($this->formatter->formatItems($line), $length);
         }
 
         return parent::write($line, $length);
-    }
-
-    /**
-     * Dump LTSV line.
-     *
-     * @param array $data
-     * @return string
-     */
-    public function asLtsvLine(array $data)
-    {
-        $content = array();
-
-        foreach ($data as $key => $value) {
-            $content[] = $this->formatter->format($label, $value);
-        }
-
-        return implode("\t", $content);
     }
 }

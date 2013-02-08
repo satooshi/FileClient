@@ -19,4 +19,21 @@ class Formatter
 
         throw new \RuntimeException(sprintf('Could not format LTSV value of label:%s.', $label));
     }
+
+    /**
+     * Format LTSV items to line.
+     *
+     * @param array $items LTSV items.
+     * @return string Formatted line.
+     */
+    public function formatItems(array $items)
+    {
+        $fields = array();
+
+        foreach ($items as $label => $value) {
+            $fields[] = $this->format($label, $value);
+        }
+
+        return implode("\t", $fields);
+    }
 }
