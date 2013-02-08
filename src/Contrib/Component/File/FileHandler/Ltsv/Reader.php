@@ -2,7 +2,7 @@
 namespace Contrib\Component\File\FileHandler\Ltsv;
 
 use Contrib\Component\File\FileHandler\Plain\Reader as LineReader;
-use Contrib\Component\File\Parser\LtsvParser;
+use Contrib\Component\File\FileType\Ltsv\Parser;
 
 /**
  * LTSV file line reader.
@@ -10,9 +10,9 @@ use Contrib\Component\File\Parser\LtsvParser;
 class Reader extends LineReader
 {
     /**
-     * LtsvParser object.
+     * LTSV Parser object.
      *
-     * @var LtsvParser
+     * @var Parser
      */
     protected $parser;
 
@@ -25,7 +25,7 @@ class Reader extends LineReader
     {
         parent::__construct($handle);
 
-        $this->parser = new LtsvParser();
+        $this->parser = new Parser();
     }
 
     /**

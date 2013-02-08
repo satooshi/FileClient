@@ -1,13 +1,14 @@
 <?php
-namespace Contrib\Component\File\Parser;
+namespace Contrib\Component\File\FileType\Ltsv;
 
-class LtsvParser
+class Parser
 {
     /**
      * Parse LTSV line.
      *
-     * @param string $line
-     * @return array
+     * @param string $line LTSV line.
+     * @return array LTSV items.
+     * @throws \RuntimeException Throw on parse error.
      */
     public function parseLine($line)
     {
@@ -16,10 +17,10 @@ class LtsvParser
         $items = array();
 
         foreach ($tsvFields as $tsvField) {
-            $item = $this->parseField($tsvField);
+            list($label, $value) = $this->parseField($tsvField);
 
             if ($item !== null) {
-                $items[$item[0]] = $item[1];
+                $items[$label] = $value;
             }
         }
 
@@ -29,19 +30,20 @@ class LtsvParser
     /**
      * Parse LTSV field.
      *
-     * @param string $tsvField
-     * @return array|null
+     * @param string $tsvField LTSV field.
+     * @return array LTSV item.
+     * @throws \RuntimeException Throw on parse error.
      */
     public function parseField($tsvField)
     {
         if (false !== stripos($tsvField, ':')) {
-            $labelValue = explode(':', $tsvField);
+            $labelValue = explode(':', $tsvField, 2);
 
             if (count($labelValue) === 2) {
                 return $labelValue;
             }
         }
 
-        return null;
+        throw new \RuntimeException(sprintf('Could not parse LTSV field(%s).', $tsvField));
     }
 }

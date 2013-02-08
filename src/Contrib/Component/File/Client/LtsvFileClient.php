@@ -3,8 +3,8 @@ namespace Contrib\Component\File\Client;
 
 use Contrib\Component\File\FileHandler\Ltsv\Reader;
 use Contrib\Component\File\FileHandler\Ltsv\Writer;
-use Contrib\Component\File\Formatter\LtsvFormatter;
-use Contrib\Component\File\Parser\LtsvParser;
+use Contrib\Component\File\FileType\Ltsv\Formatter;
+use Contrib\Component\File\FileType\Ltsv\Parser;
 
 /**
  * LTSV file client.
@@ -12,16 +12,16 @@ use Contrib\Component\File\Parser\LtsvParser;
 class LtsvFileClient extends FileClient
 {
     /**
-     * LtsvParser object.
+     * LTSV Parser object.
      *
-     * @var LtsvParser
+     * @var Parser
      */
     protected $parser;
 
     /**
-     * LtsvFormatter object.
+     * LTSV Formatter object.
      *
-     * @var LtsvFormatter
+     * @var Formatter
      */
     protected $formatter;
 
@@ -145,7 +145,7 @@ class LtsvFileClient extends FileClient
     protected function parseLines($lines)
     {
         if (!isset($this->parser)) {
-            $this->parser = new LtsvParser();
+            $this->parser = new Parser();
         }
 
         $parsedLines = array();
@@ -170,7 +170,7 @@ class LtsvFileClient extends FileClient
         }
 
         if (!isset($this->formatter)) {
-            $this->formatter = new LtsvFormatter();
+            $this->formatter = new Formatter();
         }
 
         $lines = array();

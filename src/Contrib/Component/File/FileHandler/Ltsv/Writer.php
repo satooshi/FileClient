@@ -2,7 +2,7 @@
 namespace Contrib\Component\File\FileHandler\Ltsv;
 
 use Contrib\Component\File\FileHandler\Plain\Writer as LineWriter;
-use Contrib\Component\File\Formatter\LtsvFormatter;
+use Contrib\Component\File\FileType\Ltsv\Formatter;
 
 /**
  * LTSV file line writer.
@@ -10,9 +10,9 @@ use Contrib\Component\File\Formatter\LtsvFormatter;
 class Writer extends LineWriter
 {
     /**
-     * LtsvFormatter object.
+     * LTSV Formatter object.
      *
-     * @var LtsvFormatter
+     * @var Formatter
      */
     protected $formatter;
 
@@ -26,7 +26,7 @@ class Writer extends LineWriter
     {
         parent::__construct($handle, $newLine);
 
-        $this->formatter = new LtsvFormatter();
+        $this->formatter = new Formatter();
     }
 
     /**

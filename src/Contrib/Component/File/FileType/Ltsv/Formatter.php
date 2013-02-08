@@ -1,7 +1,7 @@
 <?php
-namespace Contrib\Component\File\Formatter;
+namespace Contrib\Component\File\FileType\Ltsv;
 
-class LtsvFormatter
+class Formatter
 {
     /**
      * Format data.
