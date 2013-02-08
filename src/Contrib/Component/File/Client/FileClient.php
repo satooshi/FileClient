@@ -251,6 +251,7 @@ class FileClient
      * @param integer  $limit     Count of the limit.
      * @param integer  $offset    Offset of the limit.
      * @return \Iterator|false Iterator on success, false on failure.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
      */
     public function walk($callback, $skipEmptyCount = true, $limit = -1, $offset = 0)
     {
@@ -449,6 +450,8 @@ class FileClient
         return new Iterator($handle);
     }
 
+
+
     /**
      * Iterate iterator.
      *
@@ -538,6 +541,7 @@ class FileClient
      * @param integer $limit     Count of the limit.
      * @param integer $offset    Offset of the limit.
      * @return \Iterator LimitIterator if limit specified, LineIterator otherwise.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
      */
     protected function createLineIterator($path, $skipEmptyCount, $limit = -1, $offset = 0)
     {
