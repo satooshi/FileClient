@@ -151,7 +151,6 @@ array(2) {
   'label2' =>
   string(6) "value2"
 }
-
 ```
 
 formatter example:

@@ -19,9 +19,7 @@ class Parser
         foreach ($tsvFields as $tsvField) {
             list($label, $value) = $this->parseField($tsvField);
 
-            if ($item !== null) {
-                $items[$label] = $value;
-            }
+            $items[$label] = $value;
         }
 
         return $items;
