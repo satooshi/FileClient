@@ -142,25 +142,21 @@ class FileClient
     }
 
     /**
-     * Return file line (fgets() function wrapper).
+     * Return file content (fgets() function wrapper).
      *
      * @param integer $length Length to read.
-     * @return string File contents.
+     * @return array File content.
      * @throws \RuntimeException Throw on failure if $throwException is set to true.
      */
-    public function readLine($length = null)
+    public function readLines($length = null)
     {
-        if (!isset($this->lineReader)) {
-            $handle = $this->openForRead($this->path);
+        $lines = array();
 
-            if ($handle === false) {
-                return false;
-            }
-
-            $this->lineReader = $this->createReader($handle);
+        while (false !== $line = $this->readLine($length)) {
+            $lines[] = $line;
         }
 
-        return $this->lineReader->read($length);
+        return $lines;
     }
 
     /**
@@ -188,26 +184,21 @@ class FileClient
     }
 
     /**
-     * Write line to file (fwrite() function wrapper).
+     * Write lines to file (fgets() function wrapper).
      *
-     * @param string $line Line to write.
+     * @param array   $lines  Lines data to write.
      * @param integer $length Length to write.
      * @return integer Number of bytes written to the file.
-     * @throws \RuntimeException Throw on failure if $throwException is set to true.
      */
-    public function writeLine($line, $length = null)
+    public function writeLines(array $lines, $length = null)
     {
-        if (!isset($this->lineWriter)) {
-            $handle = $this->openForWrite($this->path);
+        $bytes = 0;
 
-            if ($handle === false) {
-                return false;
-            }
-
-            $this->lineWriter = $this->createWriter($handle);
+        foreach ($lines as $line) {
+            $bytes += $this->writeLine($line, $length);
         }
 
-        return $this->lineWriter->write($line, $length);
+        return $bytes;
     }
 
     /**
@@ -235,26 +226,21 @@ class FileClient
     }
 
     /**
-     * Append line to file (fwrite() function wrapper).
+     * Append lines to file (fgets() function wrapper).
      *
-     * @param string $line Line to append.
-     * @param integer $length Appending length.
+     * @param array  $lines  Lines data to append.
+     * @param string $length Length to write.
      * @return integer Number of bytes written to the file.
-     * @throws \RuntimeException Throw on failure if $throwException is set to true.
      */
-    public function appendLine($line, $length = null)
+    public function appendLines(array $lines, $length = null)
     {
-        if (!isset($this->lineAppender)) {
-            $handle = $this->openForAppend($this->path);
+        $bytes = 0;
 
-            if ($handle === false) {
-                return false;
-            }
-
-            $this->lineAppender = $this->createWriter($handle);
+        foreach ($lines as $line) {
+            $bytes += $this->appendLine($line, $length);
         }
 
-        return $this->lineAppender->write($line, $length);
+        return $bytes;
     }
 
     /**
@@ -293,6 +279,74 @@ class FileClient
     }
 
     // internal method
+
+    /**
+     * Return file line (fgets() function wrapper).
+     *
+     * @param integer $length Length to read.
+     * @return string File contents.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     */
+    protected function readLine($length = null)
+    {
+        if (!isset($this->lineReader)) {
+            $handle = $this->openForRead($this->path);
+
+            if ($handle === false) {
+                return false;
+            }
+
+            $this->lineReader = $this->createReader($handle);
+        }
+
+        return $this->lineReader->read($length);
+    }
+
+    /**
+     * Write line to file (fwrite() function wrapper).
+     *
+     * @param string $line Line to write.
+     * @param integer $length Length to write.
+     * @return integer Number of bytes written to the file.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     */
+    protected function writeLine($line, $length = null)
+    {
+        if (!isset($this->lineWriter)) {
+            $handle = $this->openForWrite($this->path);
+
+            if ($handle === false) {
+                return false;
+            }
+
+            $this->lineWriter = $this->createWriter($handle);
+        }
+
+        return $this->lineWriter->write($line, $length);
+    }
+
+    /**
+     * Append line to file (fwrite() function wrapper).
+     *
+     * @param string $line Line to append.
+     * @param integer $length Appending length.
+     * @return integer Number of bytes written to the file.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     */
+    protected function appendLine($line, $length = null)
+    {
+        if (!isset($this->lineAppender)) {
+            $handle = $this->openForAppend($this->path);
+
+            if ($handle === false) {
+                return false;
+            }
+
+            $this->lineAppender = $this->createWriter($handle);
+        }
+
+        return $this->lineAppender->write($line, $length);
+    }
 
     /**
      * Open file for read.

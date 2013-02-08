@@ -25,15 +25,17 @@ class LtsvFileClient extends FileClient
      */
     protected $formatter;
 
+    // API
+
     /**
      * Return file content (file_get_contents() function wrapper).
      *
      * @return array File contents.
      * @throws \RuntimeException Throws on failure if $throwException is set to true.
      */
-    public function readContents()
+    public function read()
     {
-        $content = $this->read();
+        $content = parent::read();
 
         if (!is_string($content)) {
             return false;
@@ -45,31 +47,13 @@ class LtsvFileClient extends FileClient
     }
 
     /**
-     * Return file content (fgets() function wrapper).
-     *
-     * @param integer $length Length to read.
-     * @return array File content.
-     * @throws \RuntimeException Throw on failure if $throwException is set to true.
-     */
-    public function readLines($length = null)
-    {
-        $lines = array();
-
-        while (false !== $line = $this->readLine($length)) {
-            $lines[] = $line;
-        }
-
-        return $lines;
-    }
-
-    /**
      * Write lines to file (fule_put_contents() function wrapper).
      *
      * @param array $content Lines data to write.
      * @return integer Number of bytes written to the file.
      * @throws \RuntimeException Throws on failure if $throwException is set to true.
      */
-    public function writeContents($content)
+    public function write($content)
     {
         $lines = $this->formatContents($content);
 
@@ -77,25 +61,7 @@ class LtsvFileClient extends FileClient
             return false;
         }
 
-        return $this->write($lines);
-    }
-
-    /**
-     * Write lines to file (fgets() function wrapper).
-     *
-     * @param array   $lines  Lines data to write.
-     * @param integer $length Length to write.
-     * @return integer Number of bytes written to the file.
-     */
-    public function writeLines(array $lines, $length = null)
-    {
-        $bytes = 0;
-
-        foreach ($lines as $line) {
-            $bytes += $this->writeLine($line, $length);
-        }
-
-        return $bytes;
+        return parent::write($lines);
     }
 
     /**
@@ -105,7 +71,7 @@ class LtsvFileClient extends FileClient
      * @return integer Number of bytes written to the file.
      * @throws \RuntimeException Throws on failure if $throwException is set to true.
      */
-    public function appendContents($content)
+    public function append($content)
     {
         $lines = $this->formatContents($content);
 
@@ -113,25 +79,7 @@ class LtsvFileClient extends FileClient
             return false;
         }
 
-        return $this->append($lines);
-    }
-
-    /**
-     * Append lines to file (fgets() function wrapper).
-     *
-     * @param array  $lines  Lines data to append.
-     * @param string $length Length to write.
-     * @return integer Number of bytes written to the file.
-     */
-    public function appendLines(array $lines, $length = null)
-    {
-        $bytes = 0;
-
-        foreach ($lines as $line) {
-            $bytes += $this->appendLine($line, $length);
-        }
-
-        return $bytes;
+        return parent::append($lines);
     }
 
     // internal method
