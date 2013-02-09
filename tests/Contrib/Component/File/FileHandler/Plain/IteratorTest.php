@@ -4,11 +4,11 @@ namespace Contrib\Component\File\FileHandler\Plain;
 use Contrib\Component\File\File;
 
 /**
- * File line reader.
+ * Iterator for file read.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class ReaderTest extends \PHPUnit_Framework_TestCase
+class IteratorTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -29,7 +29,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         $file = new File($this->path);
         $handle = $file->openForRead();
-        $this->object = new Reader($handle);
+        $this->object = new Iterator($handle);
     }
 
     protected function tearDown()
@@ -42,41 +42,20 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         unset($this->object);
     }
 
-    // read()
+    // rewind()
+    // valid()
+    // current()
+    // key()
+    // next()
 
     /**
      * @test
      */
-    public function read()
+    public function canIterate()
     {
-        $expected = $this->content;
-        $actual   = $this->object->read();
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @test
-     */
-    public function readLength()
-    {
-        $chars    = 3;
-        $expected = 'hel';
-        $actual   = $this->object->read($chars + 1);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    // seek()
-
-    /**
-     * @test
-     */
-    public function seek()
-    {
-        $expected = 0;
-        $actual   = $this->object->seek(0);
-
-        $this->assertEquals($expected, $actual);
+        foreach ($this->object as $i => $line) {
+            $this->assertEquals(0, $i);
+            $this->assertEquals($this->content, $line);
+        }
     }
 }

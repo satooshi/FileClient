@@ -5,6 +5,8 @@ use Contrib\Component\File\FileHandler\AbstractFileWriterHandler;
 
 /**
  * File line writer.
+ *
+ * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
 class Writer extends AbstractFileWriterHandler
 {

@@ -1,6 +1,11 @@
 <?php
 namespace Contrib\Component\File;
 
+/**
+ * File handle.
+ *
+ * @author Kitamura Satoshi <with.no.parachute@gmail.com>
+ */
 class FileTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;

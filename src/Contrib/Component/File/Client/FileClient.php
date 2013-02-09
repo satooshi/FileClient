@@ -19,6 +19,8 @@ use Contrib\Component\String\Encoding\Utf8;
  * } catch (\RuntimeException $e) {
  *    // on failure
  * }
+ *
+ * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
 class FileClient
 {

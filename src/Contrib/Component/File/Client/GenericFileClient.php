@@ -9,6 +9,8 @@ use Contrib\Component\File\FileHandler\Generic\Iterator;
 
 /**
  * Generic file client.
+ *
+ * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
 class GenericFileClient extends FileClient
 {

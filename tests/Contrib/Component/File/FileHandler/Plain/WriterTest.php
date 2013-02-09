@@ -4,11 +4,11 @@ namespace Contrib\Component\File\FileHandler\Plain;
 use Contrib\Component\File\File;
 
 /**
- * File line reader.
+ * File line writer.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class ReaderTest extends \PHPUnit_Framework_TestCase
+class WriterTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -28,8 +28,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         file_put_contents($this->path, $this->content);
 
         $file = new File($this->path);
-        $handle = $file->openForRead();
-        $this->object = new Reader($handle);
+        $handle = $file->openForWrite();
+        $this->object = new Writer($handle);
     }
 
     protected function tearDown()
@@ -42,15 +42,15 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         unset($this->object);
     }
 
-    // read()
+    // write()
 
     /**
      * @test
      */
-    public function read()
+    public function write()
     {
-        $expected = $this->content;
-        $actual   = $this->object->read();
+        $expected = strlen($this->content) + 1;
+        $actual   = $this->object->write($this->content);
 
         $this->assertEquals($expected, $actual);
     }
@@ -58,24 +58,10 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function readLength()
+    public function writeLength()
     {
-        $chars    = 3;
-        $expected = 'hel';
-        $actual   = $this->object->read($chars + 1);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    // seek()
-
-    /**
-     * @test
-     */
-    public function seek()
-    {
-        $expected = 0;
-        $actual   = $this->object->seek(0);
+        $expected = 3;
+        $actual   = $this->object->write($this->content, $expected);
 
         $this->assertEquals($expected, $actual);
     }

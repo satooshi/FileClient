@@ -3,6 +3,8 @@ namespace Contrib\Component\File\FileHandler;
 
 /**
  * Abstract File handler
+ *
+ * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
 abstract class AbstractFileHandler
 {

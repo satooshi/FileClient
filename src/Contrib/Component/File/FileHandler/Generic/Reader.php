@@ -5,6 +5,8 @@ use Contrib\Component\File\FileHandler\Plain\Reader as LineReader;
 
 /**
  * Generic line reader.
+ *
+ * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
 class Reader
 {

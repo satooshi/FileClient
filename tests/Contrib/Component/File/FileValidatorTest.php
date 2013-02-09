@@ -1,6 +1,11 @@
 <?php
 namespace Contrib\Component\File;
 
+/**
+ * File access validator.
+ *
+ * @author Kitamura Satoshi <with.no.parachute@gmail.com>
+ */
 class FileValidatorTest extends \PHPUnit_Framework_TestCase
 {
     protected $path;

@@ -5,6 +5,8 @@ use Contrib\Component\File\FileHandler\Plain\Writer as LineWriter;
 
 /**
  * Generic line writer.
+ *
+ * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
 class Writer
 {

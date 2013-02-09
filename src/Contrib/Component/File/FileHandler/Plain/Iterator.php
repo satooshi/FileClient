@@ -3,6 +3,8 @@ namespace Contrib\Component\File\FileHandler\Plain;
 
 /**
  * Iterator for file read.
+ *
+ * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
 class Iterator implements \Iterator
 {

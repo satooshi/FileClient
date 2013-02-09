@@ -5,6 +5,8 @@ use Contrib\Component\File\FileHandler\Plain\Iterator as LineIterator;
 
 /**
  * Generic line iterator.
+ *
+ * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
 class Iterator extends LineIterator
 {

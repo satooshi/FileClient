@@ -5,6 +5,8 @@ use Contrib\Component\File\FileHandler\AbstractFileHandler;
 
 /**
  * File line reader.
+ *
+ * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
 class Reader extends AbstractFileHandler
 {
