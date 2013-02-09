@@ -66,23 +66,15 @@ $autoDetectLineEnding = true; // better line ending handling on Mac
 $client = new FileClient($path);
 
 // read
-try {
-    $content = $client->read();
-} catch (\RuntimeException $e) {
-    // exception occurs if you don't set $throwException = false on construction
-    // and the client could not read a file
-}
+$content = $client->read();
 
 // write
-// exception occurs if the client could not write content to a file
 $client->write($content);
 
 // append
-// exception occurs if the client could not write content to a file
 $client->append($content);
 
 // walk
-// exception occurs if the client could not read content to a file
 $client->walk(
     funtion ($line, $numLine) {
         if ($numLine === 1) {
@@ -129,47 +121,4 @@ $client->write($content);
 
 // append LTSV items
 $client->append($content);
-```
-
-You can use parser/formatter itself. Parser example:
-
-```php
-<?php
-
-use Contrib\Component\File\FileType\Ltsv\Parser;
-
-// parse LTSV
-$line = "label1:value1\tlabel2:value2";
-$parser = new Parser();
-$items = $parser->parseLine($line);
-```
-
-result in:
-
-```
-array(2) {
-  'label1' =>
-  string(6) "value1"
-  'label2' =>
-  string(6) "value2"
-}
-```
-
-formatter example:
-
-```php
-<?php
-
-use Contrib\Component\File\FileType\Ltsv\Formatter;
-
-// format to LTSV
-$items = ['label1' => 'value1', 'label2' => 'value2'];
-$formatter = new Formatter();
-$line = $formatter->formatItems($items);
-```
-
-result in:
-
-```php
-"label1:value1\tlabel2:value2"
 ```
