@@ -107,18 +107,11 @@ Labeled Tab-separated Values (LTSV) file format is introduced by Hatena engineer
 ```php
 <?php
 
-use Contrib\Component\File\Client\LtsvFileClient;
+use Contrib\Component\Serializer\Factory;
+use Contrib\Component\File\Client\GenericFileClient;
 
 $path = '/path/to/log.ltsv';
-$client = new LtsvFileClient($path);
+$serializer = Factory::createSerializer();
+$client = new GenericFileClient($path, $serializer);
 
-// read
-// return parsed LTSV items
-$content = $client->read();
-
-// write LTSV items
-$client->write($content);
-
-// append LTSV items
-$client->append($content);
 ```
