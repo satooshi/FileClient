@@ -1,0 +1,14 @@
+language: php
+php:
+    - 5.5
+    - 5.4
+    - 5.3
+
+before_script:
+    - curl -s http://getcomposer.org/installer | php
+    - php composer.phar install --dev
+
+script: 
+    - phpunit -c phpunit.xml
+    - cat build/logs/testdox.txt
+
