@@ -1,11 +1,12 @@
 <?php
 namespace Contrib\Component\File\Client;
 
-use Contrib\Component\String\Encoding\Utf8;
+use Contrib\Component\File\File;
 use Contrib\Component\File\FileValidator;
 use Contrib\Component\File\FileHandler\Plain\Reader;
 use Contrib\Component\File\FileHandler\Plain\Writer;
 use Contrib\Component\File\FileHandler\Plain\Iterator;
+use Contrib\Component\String\Encoding\Utf8;
 
 /**
  * File client.
@@ -77,6 +78,11 @@ class FileClient
     protected $lineAppender;
 
     /**
+     * @var File
+     */
+    protected $file;
+
+    /**
      * Constructor.
      *
      * @param string  $path                 File path.
@@ -91,6 +97,8 @@ class FileClient
         $this->throwException       = $throwException;
         $this->autoDetectLineEnding = $autoDetectLineEnding;
 
+        $this->file = new File($path, $throwException);
+
         ini_set('auto_detect_line_endings', $this->autoDetectLineEnding);
     }
 
@@ -104,7 +112,7 @@ class FileClient
      */
     public function isReadable()
     {
-        return FileValidator::canRead($this->path, $this->throwException);
+        return $this->file->isReadable();
     }
 
     /**
@@ -115,7 +123,7 @@ class FileClient
      */
     public function isWritable()
     {
-        return FileValidator::canWrite($this->path, $this->throwException);
+        return $this->file->isWritable();
     }
 
     /**
@@ -291,7 +299,7 @@ class FileClient
     protected function readLine($length = null)
     {
         if (!isset($this->lineReader)) {
-            $handle = $this->openForRead($this->path);
+            $handle = $this->file->openForRead();
 
             if ($handle === false) {
                 return false;
@@ -314,7 +322,7 @@ class FileClient
     protected function writeLine($line, $length = null)
     {
         if (!isset($this->lineWriter)) {
-            $handle = $this->openForWrite($this->path);
+            $handle = $this->file->openForWrite();
 
             if ($handle === false) {
                 return false;
@@ -337,7 +345,7 @@ class FileClient
     protected function appendLine($line, $length = null)
     {
         if (!isset($this->lineAppender)) {
-            $handle = $this->openForAppend($this->path);
+            $handle = $this->file->openForAppend();
 
             if ($handle === false) {
                 return false;
@@ -347,72 +355,6 @@ class FileClient
         }
 
         return $this->lineAppender->write($line, $length);
-    }
-
-    /**
-     * Open file for read.
-     *
-     * @param string $path File path.
-     * @return resource|boolean File handle on success, false on faiiure
-     * @throws \RuntimeException Throw on failure if $throwException is set to true.
-     */
-    protected function openForRead($path)
-    {
-        if ($this->isReadable()) {
-            $handle = fopen($path, 'r');
-
-            if (false === $handle && $this->throwException) {
-                throw new \RuntimeException("Failed to read file for read : $path.");
-            }
-
-            return $handle;
-        }
-
-        return false;
-    }
-
-    /**
-     * Open file for write.
-     *
-     * @param string $path File path.
-     * @return resource|boolean File handle on success, false on faiiure
-     * @throws \RuntimeException Throw on failure if $throwException is set to true.
-     */
-    protected function openForWrite($path)
-    {
-        if ($this->isWritable()) {
-            $handle = fopen($path, 'w');
-
-            if (false === $handle && $this->throwException) {
-                throw new \RuntimeException("Failed to open file for write : $path.");
-            }
-
-            return $handle;
-        }
-
-        return false;
-    }
-
-    /**
-     * Open file for append
-     *
-     * @param string $path File path.
-     * @return resource|boolean File handle on success, false on faiiure.
-     * @throws \RuntimeException Throw on failure if $throwException is set to true.
-     */
-    protected function openForAppend($path)
-    {
-        if ($this->isWritable()) {
-            $handle = fopen($path, 'a');
-
-            if (false === $handle && $this->throwException) {
-                throw new \RuntimeException("Failed to open file for append : $path.");
-            }
-
-            return $handle;
-        }
-
-        return false;
     }
 
     // create line handler
@@ -450,6 +392,33 @@ class FileClient
         return new Iterator($handle);
     }
 
+
+    /**
+     * Create LineIterator.
+     *
+     * @param string  $path      File path.
+     * @param boolean $skipEmpty Whether to skip count if empty line.
+     * @param integer $limit     Count of the limit.
+     * @param integer $offset    Offset of the limit.
+     * @return \Iterator LimitIterator if limit specified, LineIterator otherwise.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     */
+    protected function createLineIterator($path, $skipEmptyCount, $limit = -1, $offset = 0)
+    {
+        $handle = $this->file->openForRead();
+
+        if ($handle === false) {
+            return false;
+        }
+
+        $iterator = $this->createIterator($handle);
+
+        if ($limit <= 0 || $skipEmptyCount) {
+            return $iterator;
+        }
+
+        return new \LimitIterator($iterator, $offset, $limit);
+    }
 
 
     /**
@@ -531,33 +500,6 @@ class FileClient
     protected function filterIteratedLine($line)
     {
         return $line;
-    }
-
-    /**
-     * Create LineIterator.
-     *
-     * @param string  $path      File path.
-     * @param boolean $skipEmpty Whether to skip count if empty line.
-     * @param integer $limit     Count of the limit.
-     * @param integer $offset    Offset of the limit.
-     * @return \Iterator LimitIterator if limit specified, LineIterator otherwise.
-     * @throws \RuntimeException Throw on failure if $throwException is set to true.
-     */
-    protected function createLineIterator($path, $skipEmptyCount, $limit = -1, $offset = 0)
-    {
-        $handle = $this->openForRead($path);
-
-        if ($handle === false) {
-            return false;
-        }
-
-        $iterator = $this->createIterator($handle);
-
-        if ($limit <= 0 || $skipEmptyCount) {
-            return $iterator;
-        }
-
-        return new \LimitIterator($iterator, $offset, $limit);
     }
 
     /**
