@@ -28,7 +28,7 @@ abstract class AbstractFileHandler
      */
     public function __destruct()
     {
-        if (isset($this->handle)) {
+        if (isset($this->handle) && is_resource($this->handle)) {
             fclose($this->handle);
         }
     }
@@ -45,17 +45,5 @@ abstract class AbstractFileHandler
     public function seek($offset, $whence = SEEK_SET)
     {
         return fseek($this->handle, $offset, $whence);
-    }
-
-    // accessor
-
-    /**
-     * Return file handle.
-     *
-     * @return resource
-     */
-    public function getHandle()
-    {
-        return $this->handle;
     }
 }

@@ -112,16 +112,6 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($actual);
     }
 
-    /**
-     * @test
-     * @expectedException RuntimeException
-     */
-    public function throwRuntimeExceptionOnOpenForReadIfPathIsNotReadable()
-    {
-        $this->object = new File($this->unreadablePath, $this->throwException);
-        $this->object->openForRead();
-    }
-
     // openForWrite()
 
     /**

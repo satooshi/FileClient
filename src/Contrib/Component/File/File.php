@@ -3,9 +3,26 @@ namespace Contrib\Component\File;
 
 class File
 {
+    /**
+     * File path.
+     *
+     * @var string
+     */
     protected $path;
+
+    /**
+     * Whether to throw exception.
+     *
+     * @var boolean
+     */
     protected $throwException;
 
+    /**
+     * Constructor.
+     *
+     * @param string  $path           File path.
+     * @param boolean $throwException Whether to throw exception.
+     */
     public function __construct($path, $throwException = true)
     {
         $this->path = $path;
@@ -43,13 +60,7 @@ class File
     public function openForRead()
     {
         if ($this->isReadable()) {
-            $handle = fopen($this->path, 'r');
-
-            if (false === $handle && $this->throwException) {
-                throw new \RuntimeException("Failed to read file for read : $this->path.");
-            }
-
-            return $handle;
+            return fopen($this->path, 'r');
         }
 
         return false;
@@ -64,13 +75,7 @@ class File
     public function openForWrite()
     {
         if ($this->isWritable()) {
-            $handle = fopen($this->path, 'w');
-
-            if (false === $handle && $this->throwException) {
-                throw new \RuntimeException("Failed to open file for write : $this->path.");
-            }
-
-            return $handle;
+            return fopen($this->path, 'w');
         }
 
         return false;
@@ -85,13 +90,7 @@ class File
     public function openForAppend()
     {
         if ($this->isWritable()) {
-            $handle = fopen($this->path, 'a');
-
-            if (false === $handle && $this->throwException) {
-                throw new \RuntimeException("Failed to open file for append : $this->path.");
-            }
-
-            return $handle;
+            return fopen($this->path, 'a');
         }
 
         return false;
