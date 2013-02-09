@@ -1,12 +1,10 @@
 <?php
 namespace Contrib\Component\File\FileHandler\Plain;
 
-use Contrib\Component\File\FileHandler\AbstractFileHandler;
-
 /**
  * Iterator for file read.
  */
-class Iterator extends AbstractFileHandler implements \Iterator
+class Iterator implements \Iterator
 {
     /**
      * Current line number.
@@ -36,18 +34,7 @@ class Iterator extends AbstractFileHandler implements \Iterator
      */
     public function __construct($handle)
     {
-        $this->reader = $this->createReader($handle);
-    }
-
-    /**
-     * Create Reader object.
-     *
-     * @param resource $handle
-     * @return \Contrib\Component\File\FileHandler\Plain\Reader
-     */
-    protected function createReader($handle)
-    {
-        return new Reader($handle);
+        $this->reader = new Reader($handle);
     }
 
     // Iterator interface
@@ -59,7 +46,7 @@ class Iterator extends AbstractFileHandler implements \Iterator
      */
     public function rewind()
     {
-        fseek($this->reader->getHandle(), 0);
+        $this->reader->seek(0);
 
         $this->line    = $this->reader->read();
         $this->numLine = 0;

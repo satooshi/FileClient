@@ -33,6 +33,20 @@ abstract class AbstractFileHandler
         }
     }
 
+    // API
+
+    /**
+     * Seek on a file pointer.
+     *
+     * @param integer $offset
+     * @param string  $whence
+     * @return integer 0 on success, -1 on failure
+     */
+    public function seek($offset, $whence = SEEK_SET)
+    {
+        return fseek($this->handle, $offset, $whence);
+    }
+
     // accessor
 
     /**
