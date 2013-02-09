@@ -98,7 +98,7 @@ class LtsvFileClient extends FileClient
 
         $parsedLines = array();
 
-        foreach ($lines as $i => $line) {
+        foreach ($lines as $line) {
             $parsedLines[] = $this->parser->parseLine($line);
         }
 
@@ -123,8 +123,8 @@ class LtsvFileClient extends FileClient
 
         $lines = array();
 
-        foreach ($content as $label => $value) {
-            $lines[] = $this->formatter->format($label, $value);
+        foreach ($content as $line) {
+            $lines[] = $this->formatter->formatItems($line);
         }
 
         return $lines;
