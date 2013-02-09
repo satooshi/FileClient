@@ -1,10 +1,10 @@
 <?php
-namespace Contrib\Component\File\FileHandler\Serializer;
+namespace Contrib\Component\File\FileHandler\Generic;
 
 use Contrib\Component\File\FileHandler\Plain\Iterator as LineIterator;
 
 /**
- * Serialized line iterator.
+ * Generic line iterator.
  */
 class Iterator extends LineIterator
 {

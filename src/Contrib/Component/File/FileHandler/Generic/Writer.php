@@ -1,10 +1,10 @@
 <?php
-namespace Contrib\Component\File\FileHandler\Serializer;
+namespace Contrib\Component\File\FileHandler\Generic;
 
 use Contrib\Component\File\FileHandler\Plain\Writer as LineWriter;
 
 /**
- * Deserialized line writer.
+ * Generic line writer.
  */
 class Writer
 {
@@ -44,7 +44,7 @@ class Writer
     public function write($line, $length = null)
     {
         if (is_array($line)) {
-            return $this->writer->write($this->serializer->serialize($line), $length);
+            return $this->writer->write($this->serializer->encode($line), $length);
         }
 
         return $this->writer->write($line, $length);

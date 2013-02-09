@@ -3,14 +3,14 @@ namespace Contrib\Component\File\Client;
 
 use Contrib\Component\File\FileHandler\Plain\Reader as LineReader;
 use Contrib\Component\File\FileHandler\Plain\Writer as LineWriter;
-use Contrib\Component\File\FileHandler\Serializer\Reader;
-use Contrib\Component\File\FileHandler\Serializer\Writer;
-use Contrib\Component\File\FileHandler\Serializer\Iterator;
+use Contrib\Component\File\FileHandler\Generic\Reader;
+use Contrib\Component\File\FileHandler\Generic\Writer;
+use Contrib\Component\File\FileHandler\Generic\Iterator;
 
 /**
- * Serializer file client.
+ * Generic file client.
  */
-class SerializerFileClient extends FileClient
+class GenericFileClient extends FileClient
 {
     protected $serializer;
 

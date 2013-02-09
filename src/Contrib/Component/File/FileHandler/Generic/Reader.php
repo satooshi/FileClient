@@ -1,10 +1,10 @@
 <?php
-namespace Contrib\Component\File\FileHandler\Serializer;
+namespace Contrib\Component\File\FileHandler\Generic;
 
 use Contrib\Component\File\FileHandler\Plain\Reader as LineReader;
 
 /**
- * Serialized line reader.
+ * Generic line reader.
  */
 class Reader
 {
@@ -44,6 +44,6 @@ class Reader
     {
         $line = $this->reader->read($length);
 
-        return $this->serializer->deserialize($line);
+        return $this->serializer->decode($line);
     }
 }
