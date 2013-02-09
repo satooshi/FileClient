@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "satooshi/ltsv-seralizer": "dev-master"
+        "satooshi/ltsv-encoder": "dev-master"
     },
     "autoload": {
         "psr-0": { "Contrib\\Component": "src/" }
