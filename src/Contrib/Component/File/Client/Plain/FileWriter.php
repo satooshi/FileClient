@@ -20,7 +20,7 @@ class FileWriter extends AbstractFileWriter
     public function write($lines)
     {
         if ($this->file->isWritable()) {
-            return file_put_contents($this->path, $lines);
+            return file_put_contents($this->file->getPath(), $lines);
         }
 
         return false;
