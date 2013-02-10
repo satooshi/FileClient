@@ -18,7 +18,7 @@ class IteratorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->path = 'hello.txt';
-        $this->content = 'hello! world.';
+        $this->content = "hello! world";
 
         if (is_file($this->path)) {
             unlink($this->path);
@@ -53,6 +53,7 @@ class IteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function canIterate()
     {
+        //rewind valid current key next
         foreach ($this->object as $i => $line) {
             $this->assertEquals(0, $i);
             $this->assertEquals($this->content, $line);

@@ -46,10 +46,6 @@ class FileReaderIterator extends AbstractFileReader
      */
     public function walk($callback)
     {
-        if ($this->file->isReadable()) {
-            return false;
-        }
-
         $limit          = $this->filterLimit($this->options['limit']);
         $offset         = $this->filterOffset($this->options['offset']);
         $skipEmptyCount = $this->options['skipEmptyCount'];
@@ -128,7 +124,7 @@ class FileReaderIterator extends AbstractFileReader
 
             $items = $this->filterIteratedLine($line);
 
-            if (!$callback($items, $numLine)) {
+            if (false === $callback($items, $numLine)) {
                 return;
             }
         }
@@ -156,7 +152,7 @@ class FileReaderIterator extends AbstractFileReader
 
             $items = $this->filterIteratedLine($line);
 
-            if (!$callback($items, $numLine)) {
+            if (false === $callback($items, $numLine)) {
                 return;
             }
 
