@@ -30,10 +30,12 @@ class Reader
      * @param Contrib\Component\File\FileHandler\Plain\Reader $reader
      * @param Serializer $serializer
      */
-    public function __construct(LineReader $reader, $serializer)
+    public function __construct(LineReader $reader, $serializer, $format, $type = null)
     {
         $this->reader     = $reader;
         $this->serializer = $serializer;
+        $this->format     = $format;
+        $this->type       = $type;
     }
 
     /**
@@ -46,6 +48,10 @@ class Reader
     {
         $line = $this->reader->read($length);
 
-        return $this->serializer->decode($line);
+        if ($this->type === null) {
+            return $this->serializer->decode($line, $this->format);
+        }
+
+        return $this->serializer->deserialize($line, $this->type, $this->format);
     }
 }

@@ -30,10 +30,11 @@ class Writer
      * @param Contrib\Component\File\FileHandler\Plain\Writer $writer
      * @param Serializer $serializer
      */
-    public function __construct(LineWriter $writer, $serializer)
+    public function __construct(LineWriter $writer, $serializer, $format)
     {
         $this->writer     = $writer;
         $this->serializer = $serializer;
+        $this->format     = $format;
     }
 
     /**
@@ -45,10 +46,8 @@ class Writer
      */
     public function write($line, $length = null)
     {
-        if (is_array($line)) {
-            return $this->writer->write($this->serializer->encode($line), $length);
-        }
+        $serialized = $this->serializer->serialize($line, $this->format);
 
-        return $this->writer->write($line, $length);
+        return $this->writer->write($serialized, $length);
     }
 }

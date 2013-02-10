@@ -367,7 +367,7 @@ class FileClient
      * @param resource $handle
      * @return \Contrib\Component\File\FileHandler\Plain\Reader
      */
-    protected function createReader($handle)
+    protected function createReader($handle, $format = null, $type = null)
     {
         return new Reader($handle);
     }
@@ -378,7 +378,7 @@ class FileClient
      * @param resource $handle
      * @return \Contrib\Component\File\FileHandler\Plain\Writer
      */
-    protected function createWriter($handle)
+    protected function createWriter($handle, $format = null)
     {
         return new Writer($handle, $this->newLine);
     }
@@ -389,7 +389,7 @@ class FileClient
      * @param resource $handle
      * @return \Contrib\Component\File\FileHandler\Plain\Iterator
      */
-    protected function createIterator($handle)
+    protected function createIterator($handle, $format = null, $type = null)
     {
         return new Iterator($handle);
     }

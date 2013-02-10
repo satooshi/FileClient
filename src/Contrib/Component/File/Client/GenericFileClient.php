@@ -39,9 +39,9 @@ class GenericFileClient extends FileClient
      * @return array File contents.
      * @throws \RuntimeException Throws on failure if $throwException is set to true.
      */
-    public function read()
+    public function readAs($format, $type = null)
     {
-        $content = parent::read();
+        $content = $this->read();
 
         if (!is_string($content)) {
             return false;
@@ -49,7 +49,11 @@ class GenericFileClient extends FileClient
 
         $lines = explode($this->newLine, $content);
 
-        return $this->decode($lines);
+        if ($type === null) {
+            return $this->decode($lines, $format);
+        }
+
+        return $this->deserialize($lines, $type, $format);
     }
 
     /**
@@ -59,15 +63,15 @@ class GenericFileClient extends FileClient
      * @return integer Number of bytes written to the file.
      * @throws \RuntimeException Throws on failure if $throwException is set to true.
      */
-    public function write($content)
+    public function writeAs($content, $format)
     {
-        $lines = $this->encode($content);
+        $lines = $this->serialize($content, $format);
 
         if (!is_string($lines)) {
             return false;
         }
 
-        return parent::write($lines);
+        return $this->write($lines);
     }
 
     /**
@@ -77,15 +81,138 @@ class GenericFileClient extends FileClient
      * @return integer Number of bytes written to the file.
      * @throws \RuntimeException Throws on failure if $throwException is set to true.
      */
-    public function append($content)
+    public function appendAs($content, $format)
     {
-        $lines = $this->encode($content);
+        $lines = $this->serialize($content, $format);
 
         if (!is_string($lines)) {
             return false;
         }
 
-        return parent::append($lines);
+        return $this->append($lines);
+    }
+
+
+    /**
+     * Return file content (fgets() function wrapper).
+     *
+     * @param integer $length Length to read.
+     * @return array File content.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     */
+    public function readLinesAs($format, $type = null, $length = null)
+    {
+        $lines = array();
+
+        while (false !== $line = $this->readLineAs($format, $type, $length)) {
+            $lines[] = $line;
+        }
+
+        return $lines;
+    }
+
+    /**
+     * Write lines to file (fgets() function wrapper).
+     *
+     * @param array   $lines  Lines data to write.
+     * @param integer $length Length to write.
+     * @return integer Number of bytes written to the file.
+     */
+    public function writeLinesAs(array $lines, $format, $length = null)
+    {
+        $bytes = 0;
+
+        foreach ($lines as $line) {
+            $bytes += $this->writeLineAs($line, $format, $length);
+        }
+
+        return $bytes;
+    }
+
+    /**
+     * Append lines to file (fgets() function wrapper).
+     *
+     * @param array  $lines  Lines data to append.
+     * @param string $length Length to write.
+     * @return integer Number of bytes written to the file.
+     */
+    public function appendLinesAs(array $lines, $format, $length = null)
+    {
+        $bytes = 0;
+
+        foreach ($lines as $line) {
+            $bytes += $this->appendLineAs($line, $format, $length);
+        }
+
+        return $bytes;
+    }
+
+    /**
+     * Return file line (fgets() function wrapper).
+     *
+     * @param integer $length Length to read.
+     * @return string File contents.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     */
+    protected function readLineAs($format, $type = null, $length = null)
+    {
+        if (!isset($this->lineReader)) {
+            $handle = $this->file->openForRead();
+
+            if ($handle === false) {
+                return false;
+            }
+
+            $this->lineReader = $this->createReader($handle, $format, $type);
+        }
+
+        return $this->lineReader->read($length);
+    }
+
+    /**
+     * Write line to file (fwrite() function wrapper).
+     *
+     * @param string $line Line to write.
+     * @param integer $length Length to write.
+     * @return integer Number of bytes written to the file.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     */
+    protected function writeLineAs($line, $format, $length = null)
+    {
+        if (!isset($this->lineWriter)) {
+            $handle = $this->file->openForWrite();
+
+            if ($handle === false) {
+                return false;
+            }
+
+            $this->lineWriter = $this->createWriter($handle, $format);
+        }
+
+        return $this->lineWriter->write($line, $length);
+    }
+
+    /**
+     * Append line to file (fwrite() function wrapper).
+     *
+     * @param string $line Line to append.
+     * @param integer $length Appending length.
+     * @return integer Number of bytes written to the file.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     */
+    protected function appendLineAs($line, $format, $length = null)
+    {
+        if (!isset($this->lineAppender)) {
+            $handle = $this->file->openForAppend();
+
+            if ($handle === false) {
+                return false;
+            }
+
+            $this->lineAppender = $this->createWriter($handle, $format);
+        }
+
+        return $this->lineAppender->write($line, $length);
     }
 
     // internal method
@@ -96,12 +223,29 @@ class GenericFileClient extends FileClient
      * @param string $lines Line.
      * @return array Parsed data.
      */
-    protected function decode($lines)
+    protected function decode($lines, $format)
     {
         $parsedLines = array();
 
         foreach ($lines as $line) {
-            $parsedLines[] = $this->serializer->deserialize($line);
+            $parsedLines[] = $this->serializer->decode($line, $format);
+        }
+
+        return $parsedLines;
+    }
+
+    /**
+     * Parse lines.
+     *
+     * @param string $lines Line.
+     * @return array Parsed data.
+     */
+    protected function deserialize($lines, $type, $format)
+    {
+        $parsedLines = array();
+
+        foreach ($lines as $line) {
+            $parsedLines[] = $this->serializer->deserialize($line, $type, $format);
         }
 
         return $parsedLines;
@@ -113,7 +257,7 @@ class GenericFileClient extends FileClient
      * @param array $content   Content.
      * @return string Formatted Lines.
      */
-    protected function encode($content)
+    protected function serialize($content, $format)
     {
         if (!is_array($content)) {
             return false;
@@ -122,7 +266,7 @@ class GenericFileClient extends FileClient
         $lines = array();
 
         foreach ($content as $line) {
-            $lines[] = $this->serializer->serialize($line);
+            $lines[] = $this->serializer->serialize($line, $format);
         }
 
         return implode($this->newLine, $lines);
@@ -135,11 +279,11 @@ class GenericFileClient extends FileClient
      *
      * @see \Contrib\Component\File\Client\FileClient::createReader()
      */
-    protected function createReader($handle)
+    protected function createReader($handle, $format = null, $type = null)
     {
         $lineReader = new LineReader($handle);
 
-        return new Reader($lineReader, $this->serializer);
+        return new Reader($lineReader, $this->serializer, $format, $type);
     }
 
     /**
@@ -147,11 +291,11 @@ class GenericFileClient extends FileClient
      *
      * @see \Contrib\Component\File\Client\FileClient::createWriter()
      */
-    protected function createWriter($handle)
+    protected function createWriter($handle, $format = null)
     {
         $lineWriter = new LineWriter($handle, $this->newLine);
 
-        return new Writer($lineWriter, $this->serializer);
+        return new Writer($lineWriter, $this->serializer, $format);
     }
 
     /**
@@ -159,10 +303,10 @@ class GenericFileClient extends FileClient
      *
      * @see \Contrib\Component\File\Client\FileClient::createIterator()
      */
-    protected function createIterator($handle)
+    protected function createIterator($handle, $format = null, $type = null)
     {
         if (!isset($this->lineReader)) {
-            $this->lineReader = $this->createReader($handle);
+            $this->lineReader = $this->createReader($handle, $format, $type);
         }
 
         return new Iterator($this->lineReader);
