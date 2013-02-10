@@ -162,4 +162,24 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($actual);
     }
+
+    // getPath()
+
+    /**
+     * @test
+     */
+    public function getPath()
+    {
+        $this->assertEquals($this->path, $this->object->getPath());
+    }
+
+    // throwException()
+
+    /**
+     * @test
+     */
+    public function throwExceptionIsTrue()
+    {
+        $this->assertTrue($this->object->throwException());
+    }
 }
