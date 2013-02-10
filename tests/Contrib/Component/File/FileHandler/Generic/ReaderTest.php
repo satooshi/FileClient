@@ -22,8 +22,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->path = 'hello.txt';
-        $this->content = "id:1\tname:hoge";
+        $this->path = 'hello.json';
+        $this->content = '{"id":1,"name":"hoge"}';
 
         if (is_file($this->path)) {
             unlink($this->path);
@@ -48,7 +48,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     {
         $lineReader = $this->createLineReader();
         $serializer = Factory::createSerializer();
-        $format = 'ltsv';
+        $format = 'json';
 
         return new Reader($lineReader, $serializer, $format, $type);
     }

@@ -49,7 +49,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function write()
     {
-        $expected = strlen($this->content) + 1;
+        $expected = strlen($this->content) + 1; // + new line
         $actual   = $this->object->write($this->content);
 
         $this->assertEquals($expected, $actual);

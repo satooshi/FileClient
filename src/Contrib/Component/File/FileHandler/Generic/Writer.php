@@ -40,7 +40,7 @@ class Writer
     /**
      * Write line to file (fwrite() function wrapper).
      *
-     * @param array   $line   Line data to write.
+     * @param mixed   $line   Line data to write.
      * @param integer $length Length to write.
      * @return integer Number of bytes written to the file.
      */
