@@ -100,4 +100,26 @@ class File
 
         return false;
     }
+
+    // accessor
+
+    /**
+     * Return file path.
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * Return whether to throw exception.
+     *
+     * @return boolean
+     */
+    public function throwException()
+    {
+        return $this->throwException;
+    }
 }

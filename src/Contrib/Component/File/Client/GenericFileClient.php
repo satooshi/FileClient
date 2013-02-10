@@ -12,7 +12,7 @@ use Contrib\Component\File\FileHandler\Generic\Iterator;
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class GenericFileClient extends FileClient
+class GenericFileClient
 {
     protected $serializer;
 
