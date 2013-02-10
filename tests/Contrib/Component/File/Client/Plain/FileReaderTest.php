@@ -1,22 +1,21 @@
 <?php
-namespace Contrib\Component\File;
+namespace Contrib\Component\File\Client\Plain;
 
 /**
- * File handle.
+ * File reader.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class FileTest extends \PHPUnit_Framework_TestCase
+class FileReaderTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
+    protected $content;
     protected $path;
     protected $notFoundPath;
     protected $unreadablePath;
     protected $dir;
     protected $notFoundDir;
-    protected $unwritableDir;
-    protected $unwritablePath;
 
     protected $throwException;
     protected $notThrowException;
@@ -54,7 +53,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
             rmdir($this->unwritableDir);
         }
 
-        touch($this->path);
+        $this->content = "hello\nworld!";
+        file_put_contents($this->path, $this->content);
         mkdir($this->dir);
         mkdir($this->unwritableDir);
 
@@ -67,7 +67,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $this->throwException = true;
         $this->notThrowException = false;
 
-        $this->object = new File($this->path, $this->throwException);
+        $this->object = new FileReader($this->path);
     }
 
     protected function tearDown()
@@ -95,116 +95,129 @@ class FileTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    // isReadable()
+    // read()
 
     /**
      * @test
      */
-    public function isReadable()
+    public function read()
     {
-        $actual = $this->object->isReadable();
+        $expected = $this->content;
+        $actual = $this->object->read(false);
 
-        $this->assertTrue($actual);
-    }
-
-    // isWritable()
-
-    /**
-     * @test
-     */
-    public function isWritable()
-    {
-        $actual = $this->object->isWritable();
-
-        $this->assertTrue($actual);
-    }
-
-    // openForRead()
-
-    /**
-     * @test
-     */
-    public function canOpenForRead()
-    {
-        $actual = $this->object->openForRead();
-
-        $this->assertTrue(is_resource($actual));
+        $this->assertEquals($expected, $actual);
     }
 
     /**
      * @test
      */
-    public function canNotOpenForReadIfPathIsNotReadable()
+    public function canNotReadIfPathIsNotReadable()
     {
-        $this->object = new File($this->unreadablePath, $this->notThrowException);
-        $actual = $this->object->openForRead();
+        $this->object = new FileReader($this->unreadablePath, array('throwException' => false));
 
-        $this->assertFalse($actual);
-    }
-
-    // openForWrite()
-
-    /**
-     * @test
-     */
-    public function canOpenForWrite()
-    {
-        $actual = $this->object->openForWrite();
-
-        $this->assertTrue(is_resource($actual));
+        $this->assertFalse($this->object->read(false));
     }
 
     /**
      * @test
+     * @expectedException RuntimeException
      */
-    public function canNotOpenForWriteIfPathIsNotWritable()
+    public function throwRuntimeExceptionOnReadIfPathIsNotReadable()
     {
-        $this->object = new File($this->unwritablePath, $this->notThrowException);
-        $actual = $this->object->openForWrite();
+        $this->object = new FileReader($this->unreadablePath);
 
-        $this->assertFalse($actual);
-    }
-
-    // openForAppend()
-
-    /**
-     * @test
-     */
-    public function canOpenForAppend()
-    {
-        $actual = $this->object->openForAppend();
-
-        $this->assertTrue(is_resource($actual));
+        $this->object->read(false);
     }
 
     /**
      * @test
      */
-    public function canNotOpenForAppendIfPathIsNotWritable()
+    public function readExploded()
     {
-        $this->object = new File($this->unwritablePath, $this->notThrowException);
-        $actual = $this->object->openForAppend();
+        $expected = array("hello\n", "world!");
+        $actual = $this->object->read(true);
 
-        $this->assertFalse($actual);
+        $this->assertEquals($expected, $actual);
     }
-
-    // getPath()
 
     /**
      * @test
      */
-    public function getPath()
+    public function canNotReadExplodedIfPathIsNotReadable()
     {
-        $this->assertEquals($this->path, $this->object->getPath());
+        $this->object = new FileReader($this->unreadablePath, array('throwException' => false));
+
+        $this->assertFalse($this->object->read(true));
     }
 
-    // throwException()
+    /**
+     * @test
+     * @expectedException RuntimeException
+     */
+    public function throwRuntimeExceptionReadExplodedIfPathIsNotReadable()
+    {
+        $this->object = new FileReader($this->unreadablePath);
+
+        $this->object->read(true);
+    }
+
+    // readLines()
 
     /**
      * @test
      */
-    public function throwExceptionIsTrue()
+    public function readLines()
     {
-        $this->assertTrue($this->object->throwException());
+        $expected = array("hello\n", "world!");
+        $actual = $this->object->readLines();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
+     */
+    public function canNotReadLinesIfPathIsNotReadable()
+    {
+        $this->object = new FileReader($this->unreadablePath, array('throwException' => false));
+
+        $this->assertFalse($this->object->readLines());
+    }
+
+    /**
+     * @test
+     * @expectedException RuntimeException
+     */
+    public function throwRuntimeExceptionOnReadLinesIfPathIsNotReadable()
+    {
+        $this->object = new FileReader($this->unreadablePath);
+
+        $this->object->readLines();
+    }
+
+    // getFile()
+
+    /**
+     * @test
+     */
+    public function getFile()
+    {
+        $this->assertNotNull($this->object->getFile());
+    }
+
+    // getOptions()
+
+    /**
+     * @test
+     */
+    public function getOptions()
+    {
+        $expected = array(
+            'newLine'              => PHP_EOL,
+            'throwException'       => true,
+            'autoDetectLineEnding' => true,
+        );
+
+        $this->assertEquals($expected, $this->object->getOptions());
     }
 }
