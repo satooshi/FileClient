@@ -12,60 +12,25 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
 
     protected $content;
     protected $path;
-    protected $notFoundPath;
     protected $unreadablePath;
-    protected $dir;
-    protected $notFoundDir;
-
-    protected $throwException;
-    protected $notThrowException;
 
     protected function setUp()
     {
         $this->path = './hello.txt';
-        $this->notFoundPath = './notfound';
         $this->unreadablePath = './unreadable';
-        $this->dir = './test.dir';
-        $this->notFoundDir = './notfound/dir';
-        $this->unwritableDir = './unwritable.dir';
-        $this->unwritablePath = './unwritable';
-
 
         if (is_file($this->path)) {
             unlink($this->path);
         }
-        if (is_file($this->notFoundPath)) {
-            unlink($this->notFoundPath);
-        }
         if (is_file($this->unreadablePath)) {
             unlink($this->unreadablePath);
-        }
-        if (is_file($this->unwritablePath)) {
-            unlink($this->unwritablePath);
-        }
-        if (is_dir($this->dir)) {
-            rmdir($this->dir);
-        }
-        if (is_dir($this->notFoundDir)) {
-            rmdir($this->notFoundDir);
-        }
-        if (is_dir($this->unwritableDir)) {
-            rmdir($this->unwritableDir);
         }
 
         $this->content = "hello\nworld!";
         file_put_contents($this->path, $this->content);
-        mkdir($this->dir);
-        mkdir($this->unwritableDir);
 
         touch($this->unreadablePath);
-        touch($this->unwritablePath);
         chmod($this->unreadablePath, 0377);
-        chmod($this->unwritablePath, 0577);
-        chmod($this->unwritableDir, 0577);
-
-        $this->throwException = true;
-        $this->notThrowException = false;
 
         $this->object = new FileReader($this->path);
     }
@@ -75,23 +40,8 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
         if (is_file($this->path)) {
             unlink($this->path);
         }
-        if (is_file($this->notFoundPath)) {
-            unlink($this->notFoundPath);
-        }
         if (is_file($this->unreadablePath)) {
             unlink($this->unreadablePath);
-        }
-        if (is_file($this->unwritablePath)) {
-            unlink($this->unwritablePath);
-        }
-        if (is_dir($this->dir)) {
-            rmdir($this->dir);
-        }
-        if (is_dir($this->notFoundDir)) {
-            rmdir($this->notFoundDir);
-        }
-        if (is_dir($this->unwritableDir)) {
-            rmdir($this->unwritableDir);
         }
     }
 
