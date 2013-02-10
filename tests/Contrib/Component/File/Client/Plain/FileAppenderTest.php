@@ -2,11 +2,11 @@
 namespace Contrib\Component\File\Client\Plain;
 
 /**
- * File writer.
+ * File appender.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class FileWriterTest extends \PHPUnit_Framework_TestCase
+class FileAppenderTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -73,7 +73,7 @@ class FileWriterTest extends \PHPUnit_Framework_TestCase
 
     protected function createObject($path, $throwException = true)
     {
-        return new FileWriter($path, array('throwException' => $throwException));
+        return new FileAppender($path, array('throwException' => $throwException));
     }
 
     // write()

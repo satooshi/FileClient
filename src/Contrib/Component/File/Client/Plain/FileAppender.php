@@ -20,7 +20,7 @@ class FileAppender extends AbstractFileWriter
     public function write($lines)
     {
         if ($this->file->isWritable()) {
-            return file_put_contents($this->path, $lines, FILE_APPEND | LOCK_EX);
+            return file_put_contents($this->file->getPath(), $lines, FILE_APPEND | LOCK_EX);
         }
 
         return false;

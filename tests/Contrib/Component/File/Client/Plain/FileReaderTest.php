@@ -32,7 +32,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
         touch($this->unreadablePath);
         chmod($this->unreadablePath, 0377);
 
-        $this->object = new FileReader($this->path);
+        $this->object = $this->createObject($this->path);
     }
 
     protected function tearDown()
@@ -43,6 +43,11 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
         if (is_file($this->unreadablePath)) {
             unlink($this->unreadablePath);
         }
+    }
+
+    protected function createObject($path, $throwException = true)
+    {
+        return new FileReader($path, array('throwException' => $throwException));
     }
 
     // read()
@@ -63,7 +68,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function canNotReadIfPathIsNotReadable()
     {
-        $this->object = new FileReader($this->unreadablePath, array('throwException' => false));
+        $this->object = $this->createObject($this->unreadablePath, false);
 
         $this->assertFalse($this->object->read(false));
     }
@@ -74,7 +79,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function throwRuntimeExceptionOnReadIfPathIsNotReadable()
     {
-        $this->object = new FileReader($this->unreadablePath);
+        $this->object = $this->createObject($this->unreadablePath);
 
         $this->object->read(false);
     }
@@ -95,7 +100,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function canNotReadExplodedIfPathIsNotReadable()
     {
-        $this->object = new FileReader($this->unreadablePath, array('throwException' => false));
+        $this->object = $this->createObject($this->unreadablePath, false);
 
         $this->assertFalse($this->object->read(true));
     }
@@ -106,7 +111,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function throwRuntimeExceptionReadExplodedIfPathIsNotReadable()
     {
-        $this->object = new FileReader($this->unreadablePath);
+        $this->object = $this->createObject($this->unreadablePath);
 
         $this->object->read(true);
     }
@@ -129,7 +134,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function canNotReadLinesIfPathIsNotReadable()
     {
-        $this->object = new FileReader($this->unreadablePath, array('throwException' => false));
+        $this->object = $this->createObject($this->unreadablePath, false);
 
         $this->assertFalse($this->object->readLines());
     }
@@ -140,7 +145,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function throwRuntimeExceptionOnReadLinesIfPathIsNotReadable()
     {
-        $this->object = new FileReader($this->unreadablePath);
+        $this->object = $this->createObject($this->unreadablePath);
 
         $this->object->readLines();
     }
