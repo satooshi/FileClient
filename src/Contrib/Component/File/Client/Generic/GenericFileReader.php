@@ -133,26 +133,4 @@ class GenericFileReader extends AbstractGenericFileReader
 
         return new GenericLineReader($lineReader, $this->serializer, $format, $type);
     }
-
-    /**
-     * Initialize generic line reader.
-     *
-     * @param string $format
-     * @param string $type
-     * @return boolean
-     */
-    protected function initReader($format = null, $type = null)
-    {
-        if (!isset($this->lineHandler)) {
-            $handle = $this->file->openForRead();
-
-            if ($handle === false) {
-                return false;
-            }
-
-            $this->lineHandler = $this->createLineReader($handle, $format, $type);
-        }
-
-        return true;
-    }
 }

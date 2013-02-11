@@ -160,6 +160,16 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($this->object->getFile());
     }
 
+    // getLineHandler()
+
+    /**
+     * @test
+     */
+    public function getLineHandler()
+    {
+        $this->assertNull($this->object->getLineHandler());
+    }
+
     // getOptions()
 
     /**

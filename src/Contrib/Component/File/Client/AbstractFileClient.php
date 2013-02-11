@@ -11,17 +11,6 @@ use Contrib\Component\File\File;
 abstract class AbstractFileClient
 {
     /**
-     * Options.
-     *
-     * * newLine: string New line to be written (Default is PHP_EOL).
-     * * throwException: boolean Whether to throw exception.
-     * * autoDetectLineEnding: boolean Whether to use auto_detect_line_endings.
-     *
-     * @var array
-     */
-    protected $options;
-
-    /**
      * @var File
      */
     protected $file;
@@ -32,6 +21,17 @@ abstract class AbstractFileClient
      * @var mixed
      */
     protected $lineHandler;
+
+    /**
+     * Options.
+     *
+     * * newLine: string New line to be written (Default is PHP_EOL).
+     * * throwException: boolean Whether to throw exception.
+     * * autoDetectLineEnding: boolean Whether to use auto_detect_line_endings.
+     *
+     * @var array
+     */
+    protected $options;
 
     /**
      * Constructor.
@@ -60,6 +60,20 @@ abstract class AbstractFileClient
     public function getFile()
     {
         return $this->file;
+    }
+
+    /**
+     * Return line handler.
+     *
+     * @return mixed
+     */
+    public function getLineHandler()
+    {
+        if (isset($this->lineHandler)) {
+            return $this->lineHandler;
+        }
+
+        return null;
     }
 
     /**

@@ -3,6 +3,7 @@ namespace Contrib\Component\File\Client\Plain;
 
 use Contrib\Component\File\Client\AbstractFileReader;
 use Contrib\Component\File\FileHandler\Plain\Iterator as LineIterator;
+use Contrib\Component\File\FileHandler\AbstractFileHandler;
 
 /**
  * File reader iterator.
@@ -70,6 +71,8 @@ class FileReaderIterator extends AbstractFileReader
 
         return $iterator;
     }
+
+    // internal method
 
     // create line handler
 
@@ -225,5 +228,16 @@ class FileReaderIterator extends AbstractFileReader
     public function isSuspended()
     {
         return $this->isSuspended;
+    }
+
+    /**
+     * Set line handler.
+     *
+     * @param AbstractFileHandler $lineHandler
+     * @return void
+     */
+    public function setLineHandler(AbstractFileHandler $lineHandler)
+    {
+        $this->lineHandler = $lineHandler;
     }
 }

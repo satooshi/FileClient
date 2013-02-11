@@ -204,6 +204,25 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($actual);
     }
 
+    /**
+     * @test
+     */
+    public function setLineHandler()
+    {
+        $className = 'Contrib\Component\File\FileHandler\AbstractFileHandler';
+        $lineHandler = $this->getMockBuilder($className)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->object = $this->createObject($this->path);
+
+        $this->object->setLineHandler($lineHandler);
+
+        $actual = $this->object->getLineHandler();
+
+        $this->assertSame($lineHandler, $actual);
+    }
+
     // getOptions()
 
     /**

@@ -5,6 +5,7 @@ use Contrib\Component\File\Client\Plain\FileReaderIterator;
 use Contrib\Component\File\Client\AbstractGenericFileReader;
 use Contrib\Component\File\FileHandler\Plain\Iterator as LineIterator;
 use Contrib\Component\File\FileHandler\Generic\Iterator as GenericLineIterator;
+use Contrib\Component\File\FileHandler\Generic\Reader as GenericLineReader;
 
 /**
  * Generic file reader iterator.
@@ -13,6 +14,32 @@ use Contrib\Component\File\FileHandler\Generic\Iterator as GenericLineIterator;
  */
 class GenericFileReaderIterator extends AbstractGenericFileReader
 {
+    // API
+
+    /**
+     * Apply a callback to every line except for empty line.
+     *
+     * @param callable $callback function ($line, $numLine).
+     * @param string   $format File format.
+     * @param string   $type   Class name to deserialize.
+     * @return \Iterator|false Iterator on success, false on failure.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     */
+    public function walk($callback, $format, $type = null)
+    {
+        if (!isset($this->fileClient)) {
+            $this->fileClient = $this->createFileClient();
+        }
+
+        if (!$this->initReader($format, $type)) {
+            return false;
+        }
+
+        $this->fileClient->setLineHandler($this->lineHandler);
+
+        return $this->fileClient->walk($callback);
+    }
+
     // internal method
 
     /**
@@ -32,20 +59,12 @@ class GenericFileReaderIterator extends AbstractGenericFileReader
      */
     protected function createLineReader($handle, $format = null, $type = null)
     {
-        return new LineIterator($handle);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @see \Contrib\Component\File\Client\FileClient::createIterator()
-     */
-    protected function createIterator($handle, $format = null, $type = null)
-    {
-        if (!isset($this->lineHandler)) {
-            $this->lineHandler = $this->createLineReader($handle, $format, $type);
+        if (!isset($this->serializer)) {
+            throw new \RuntimeException('Serializer is not set.');
         }
 
-        return new GenericLineIterator($this->lineHandler);
+        $lineReader = new GenericLineReader($handle, $this->serializer, $format, $type);
+
+        return new GenericLineIterator($lineReader);
     }
 }
