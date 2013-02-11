@@ -127,6 +127,24 @@ class GenericFileWriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function overwriteAsJsonToExistingFile()
+    {
+        $expected = '{"id":1,"name":"hoge"}';
+
+        $this->object = $this->createObject($this->path);
+        $this->object->writeAs($this->content, 'json');
+
+        $this->object = $this->createObject($this->path);
+        $this->object->writeAs($this->content, 'json');
+
+        $actual = file_get_contents($this->path);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
+     */
     public function canNotWriteAsJsonIfPathIsNotWritable()
     {
         $this->object = $this->createObject($this->unwritablePath, false);
