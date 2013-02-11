@@ -16,21 +16,17 @@ abstract class AbstractGenericFileWriter extends AbstractGenericFileClient
     /**
      * Write lines to file (fule_put_contents() function wrapper).
      *
-     * @param string $content Lines data to write.
+     * @param array $content Data to write.
      * @return integer Number of bytes written to the file.
      * @throws \RuntimeException Throws on failure if $throwException is set to true.
      */
-    public function writeAs($content, $format)
+    public function writeAs(array $content, $format)
     {
         if (!isset($this->serializer)) {
             throw new \RuntimeException('Serializer is not set.');
         }
 
         $lines = $this->serialize($content, $format);
-
-        if (!is_string($lines)) {
-            return false;
-        }
 
         if (!isset($this->fileClient)) {
             $this->fileClient = $this->createFileClient();
@@ -59,7 +55,7 @@ abstract class AbstractGenericFileWriter extends AbstractGenericFileClient
         $bytes = 0;
 
         foreach ($lines as $line) {
-            $bytes += $this->lineWriter->write($line, $length);
+            $bytes += $this->lineHandler->write($line, $length);
         }
 
         return $bytes;
@@ -92,16 +88,12 @@ abstract class AbstractGenericFileWriter extends AbstractGenericFileClient
     /**
      * Serialize content.
      *
-     * @param string $content Content.
+     * @param array  $content Content.
      * @param string $format  Format.
      * @return string Formatted Lines.
      */
-    protected function serialize($content, $format)
+    protected function serialize(array $content, $format)
     {
-        if (!is_array($content)) {
-            return false;
-        }
-
         $lines = array();
 
         foreach ($content as $line) {
