@@ -64,11 +64,31 @@ abstract class AbstractGenericFileWriter extends AbstractGenericFileClient
     // internal method
 
     /**
+     * Open file for write..
+     *
+     * @return resource File handle.
+     */
+    abstract protected function open();
+
+    /**
      * Initialize generic line writer.
      *
      * @param string $format
      */
-    abstract protected function initWriter($format);
+    protected function initWriter($format)
+    {
+        if (!isset($this->lineHandler)) {
+            $handle = $this->open();
+
+            if ($handle === false) {
+                return false;
+            }
+
+            $this->lineHandler = $this->createLineWriter($handle, $format);
+        }
+
+        return true;
+    }
 
     /**
      * Create generic line writer.

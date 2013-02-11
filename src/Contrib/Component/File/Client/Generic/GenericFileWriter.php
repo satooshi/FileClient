@@ -16,21 +16,11 @@ class GenericFileWriter extends AbstractGenericFileWriter
     /**
      * {@inheritdoc}
      *
-     * @see \Contrib\Component\File\Client\Plain\FileWriter::initWriter()
+     * @see \Contrib\Component\File\Client\AbstractGenericFileWriter::open()
      */
-    protected function initWriter($format)
+    protected function open()
     {
-        if (!isset($this->lineHandler)) {
-            $handle = $this->file->openForWrite();
-
-            if ($handle === false) {
-                return false;
-            }
-
-            $this->lineHandler = $this->createLineWriter($handle, $format);
-        }
-
-        return true;
+        return $this->file->openForWrite();
     }
 
     /**

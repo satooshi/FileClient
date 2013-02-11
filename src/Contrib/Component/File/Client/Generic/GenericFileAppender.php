@@ -16,21 +16,11 @@ class GenericFileAppender extends AbstractGenericFileWriter
     /**
      * {@inheritdoc}
      *
-     * @see \Contrib\Component\File\Client\Plain\FileAppender::initWriter()
+     * @see \Contrib\Component\File\Client\AbstractGenericFileWriter::open()
      */
-    protected function initWriter($format)
+    protected function open()
     {
-        if (!isset($this->lineHandler)) {
-            $handle = $this->file->openForAppend();
-
-            if ($handle === false) {
-                return false;
-            }
-
-            $this->lineHandler = $this->createLineWriter($handle, $format);
-        }
-
-        return true;
+        return $this->file->openForAppend();
     }
 
     /**
