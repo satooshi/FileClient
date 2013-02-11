@@ -54,9 +54,9 @@ abstract class AbstractFileWriter extends AbstractFileClient
     /**
      * Initialize line writer.
      *
-     * @param string $format
+     * @return void
      */
-    protected function initWriter($format = null)
+    protected function initWriter()
     {
         if (!isset($this->lineHandler)) {
             $handle = $this->open();
@@ -65,7 +65,7 @@ abstract class AbstractFileWriter extends AbstractFileClient
                 return false;
             }
 
-            $this->lineHandler = $this->createLineWriter($handle, $format);
+            $this->lineHandler = $this->createLineWriter($handle);
         }
 
         return true;
@@ -75,10 +75,9 @@ abstract class AbstractFileWriter extends AbstractFileClient
      * Create line writer object.
      *
      * @param resource $handle File handle.
-     * @param string   $format File format.
      * @return \Contrib\Component\File\FileHandler\Plain\Writer
      */
-    protected function createLineWriter($handle, $format = null)
+    protected function createLineWriter($handle)
     {
         return new LineWriter($handle, $this->options['newLine']);
     }
