@@ -28,7 +28,7 @@ class FileReaderIterator extends AbstractFileReader
     {
         $options = $options + array(
             'skipEmptyCount' => true,
-            'limit'          => -1,
+            'limit'          => 0,
             'offset'         => 0,
         );
 

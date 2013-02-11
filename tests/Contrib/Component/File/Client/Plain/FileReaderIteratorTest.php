@@ -44,7 +44,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    protected function createObject($path, $throwException = true, $skipEmptyCount = true, $limit = -1, $offset = 0)
+    protected function createObject($path, $throwException = true, $skipEmptyCount = true, $limit = 0, $offset = 0)
     {
         $options = array(
             'throwException' => $throwException,
@@ -218,7 +218,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
             'throwException'       => true,
             'autoDetectLineEnding' => true,
             'skipEmptyCount'       => true,
-            'limit'                => -1,
+            'limit'                => 0,
             'offset'               => 0,
         );
 
