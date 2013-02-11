@@ -1,6 +1,8 @@
 <?php
 namespace Contrib\Component\File\Client\Plain;
 
+use Contrib\Component\File\FileHandler\Plain\Reader;
+
 /**
  * File reader iterator.
  *
@@ -209,10 +211,8 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function setLineHandler()
     {
-        $className = 'Contrib\Component\File\FileHandler\AbstractFileHandler';
-        $lineHandler = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $handle = fopen($this->path, 'r');
+        $lineHandler = new Reader($handle);
 
         $this->object = $this->createObject($this->path);
 
