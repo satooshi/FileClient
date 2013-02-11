@@ -7,6 +7,7 @@ php:
 before_script:
     - curl -s http://getcomposer.org/installer | php
     - php composer.phar install --dev
+    - curl -s https://gist.github.com/satooshi/4750401/raw > travis/ColorCLI.php
 
 script: 
     - phpunit -c travis.phpunit.xml --testdox
