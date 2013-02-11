@@ -23,6 +23,10 @@ class GenericFileReader extends AbstractGenericFileReader
      */
     public function readAs($format, $type = null)
     {
+        if (!isset($this->serializer)) {
+            throw new \RuntimeException('Serializer is not set.');
+        }
+
         if (!isset($this->fileClient)) {
             $this->fileClient = $this->createFileClient();
         }
@@ -33,7 +37,7 @@ class GenericFileReader extends AbstractGenericFileReader
             return false;
         }
 
-        $lines = explode($this->newLine, $content);
+        $lines = explode($this->options['newLine'], $content);
 
         if ($type === null) {
             return $this->decode($lines, $format);
@@ -51,9 +55,17 @@ class GenericFileReader extends AbstractGenericFileReader
      */
     public function readLinesAs($format, $type = null, $length = null)
     {
+        if (!isset($this->serializer)) {
+            throw new \RuntimeException('Serializer is not set.');
+        }
+
+        if (!$this->initReader($format, $type)) {
+            return false;
+        }
+
         $lines = array();
 
-        while (false !== $line = $this->readLineAs($format, $type, $length)) {
+        while (false !== $line = $this->lineHandler->read($length)) {
             $lines[] = $line;
         }
 
@@ -97,22 +109,6 @@ class GenericFileReader extends AbstractGenericFileReader
     }
 
     /**
-     * Return file line (fgets() function wrapper).
-     *
-     * @param integer $length Length to read.
-     * @return string File contents.
-     * @throws \RuntimeException Throw on failure if $throwException is set to true.
-     */
-    protected function readLineAs($format, $type = null, $length = null)
-    {
-        if (!$this->initReader($format, $type)) {
-            return false;
-        }
-
-        return $this->lineHandler->read($length);
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @see \Contrib\Component\File\Client\AbstractGenericFileClient::createFileClient()
@@ -127,7 +123,7 @@ class GenericFileReader extends AbstractGenericFileReader
      *
      * @see \Contrib\Component\File\Client\AbstractGenericFileReader::createLineReader()
      */
-    protected function createLineReader($handle, $format = null, $type = null)
+    protected function createLineReader($handle, $format, $type = null)
     {
         $lineReader = new LineReader($handle);
 

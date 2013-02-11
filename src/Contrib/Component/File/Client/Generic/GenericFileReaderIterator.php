@@ -27,6 +27,10 @@ class GenericFileReaderIterator extends AbstractGenericFileReader
      */
     public function walk($callback, $format, $type = null)
     {
+        if (!isset($this->serializer)) {
+            throw new \RuntimeException('Serializer is not set.');
+        }
+
         if (!isset($this->fileClient)) {
             $this->fileClient = $this->createFileClient();
         }
@@ -57,12 +61,8 @@ class GenericFileReaderIterator extends AbstractGenericFileReader
      *
      * @see \Contrib\Component\File\Client\AbstractGenericFileReader::createLineReader()
      */
-    protected function createLineReader($handle, $format = null, $type = null)
+    protected function createLineReader($handle, $format, $type = null)
     {
-        if (!isset($this->serializer)) {
-            throw new \RuntimeException('Serializer is not set.');
-        }
-
         $lineReader = new GenericLineReader($handle, $this->serializer, $format, $type);
 
         return new GenericLineIterator($lineReader);

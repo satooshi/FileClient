@@ -24,6 +24,10 @@ class Reader
      */
     protected $serializer;
 
+    protected $format;
+
+    protected $type;
+
     /**
      * Constructor.
      *
@@ -47,6 +51,10 @@ class Reader
     public function read($length = null)
     {
         $line = $this->reader->read($length);
+
+        if ($line === false) {
+            return false;
+        }
 
         if ($this->type === null) {
             return $this->serializer->decode($line, $this->format);

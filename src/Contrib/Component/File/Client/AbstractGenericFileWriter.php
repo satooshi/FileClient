@@ -22,6 +22,10 @@ abstract class AbstractGenericFileWriter extends AbstractGenericFileClient
      */
     public function writeAs($content, $format)
     {
+        if (!isset($this->serializer)) {
+            throw new \RuntimeException('Serializer is not set.');
+        }
+
         $lines = $this->serialize($content, $format);
 
         if (!is_string($lines)) {
@@ -44,10 +48,18 @@ abstract class AbstractGenericFileWriter extends AbstractGenericFileClient
      */
     public function writeLinesAs(array $lines, $format, $length = null)
     {
+        if (!isset($this->serializer)) {
+            throw new \RuntimeException('Serializer is not set.');
+        }
+
+        if (!$this->initWriter($format)) {
+            return false;
+        }
+
         $bytes = 0;
 
         foreach ($lines as $line) {
-            $bytes += $this->writeLineAs($line, $format, $length);
+            $bytes += $this->lineWriter->write($line, $length);
         }
 
         return $bytes;
@@ -63,24 +75,6 @@ abstract class AbstractGenericFileWriter extends AbstractGenericFileClient
     abstract protected function initWriter($format);
 
     /**
-     * Write line to file (fwrite() function wrapper).
-     *
-     * @param string  $line   Line to write.
-     * @param string  $format Format.
-     * @param integer $length Length to write.
-     * @return integer Number of bytes written to the file.
-     * @throws \RuntimeException Throw on failure if $throwException is set to true.
-     */
-    protected function writeLineAs($line, $format, $length = null)
-    {
-        if (!$this->initWriter($format)) {
-            return false;
-        }
-
-        return $this->lineWriter->write($line, $length);
-    }
-
-    /**
      * Create generic line writer.
      *
      * @param resource $handle
@@ -90,10 +84,6 @@ abstract class AbstractGenericFileWriter extends AbstractGenericFileClient
      */
     protected function createLineWriter($handle, $format = null)
     {
-        if (!isset($this->serializer)) {
-            throw new \RuntimeException('Serializer is not set.');
-        }
-
         $lineWriter = new LineWriter($handle, $this->options['newLine']);
 
         return new GenericLineWriter($lineWriter, $this->serializer, $format);
@@ -108,10 +98,6 @@ abstract class AbstractGenericFileWriter extends AbstractGenericFileClient
      */
     protected function serialize($content, $format)
     {
-        if (!isset($this->serializer)) {
-            throw new \RuntimeException('Serializer is not set.');
-        }
-
         if (!is_array($content)) {
             return false;
         }

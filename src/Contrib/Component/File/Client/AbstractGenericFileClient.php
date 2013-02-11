@@ -2,6 +2,7 @@
 namespace Contrib\Component\File\Client;
 
 use Symfony\Component\Serializer\SerializerAwareInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Abstract generic file client.

@@ -17,7 +17,7 @@ abstract class AbstractGenericFileReader extends AbstractGenericFileClient
      * @param string   $format
      * @param string   $type
      */
-    abstract protected function createLineReader($handle, $format = null, $type = null);
+    abstract protected function createLineReader($handle, $format, $type = null);
 
     /**
      * Initialize generic line reader.
@@ -26,7 +26,7 @@ abstract class AbstractGenericFileReader extends AbstractGenericFileClient
      * @param string $type
      * @return boolean
      */
-    protected function initReader($format = null, $type = null)
+    protected function initReader($format, $type = null)
     {
         if (!isset($this->lineHandler)) {
             $handle = $this->file->openForRead();
