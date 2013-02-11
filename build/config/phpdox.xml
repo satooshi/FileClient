@@ -5,8 +5,6 @@
             <exclude mask="*.html.php" />
             <exclude mask="*.config.php" />
             <exclude mask="*.twig.php" />
-            <exclude mask="*Autoload.php" />
-            <exclude mask="autoload.php" />
         </collector>
         <generator output="build">
             <build engine="html" enabled="true" output="api"/>
