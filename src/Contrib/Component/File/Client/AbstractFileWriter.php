@@ -45,11 +45,31 @@ abstract class AbstractFileWriter extends AbstractFileClient
     // internal method
 
     /**
+     * Open file for write.
+     *
+     * @return resource File handle.
+     */
+    abstract protected function open();
+
+    /**
      * Initialize line writer.
      *
      * @param string $format
      */
-    abstract protected function initWriter($format = null);
+    protected function initWriter($format = null)
+    {
+        if (!isset($this->lineHandler)) {
+            $handle = $this->open();
+
+            if ($handle === false) {
+                return false;
+            }
+
+            $this->lineHandler = $this->createLineWriter($handle, $format);
+        }
+
+        return true;
+    }
 
     /**
      * Create line writer object.
