@@ -60,9 +60,9 @@ class FileReader extends AbstractFileReader
     /**
      * {@inheritdoc}
      *
-     * @see \Contrib\Component\File\Client\AbstractFileReader::createLineHandler()
+     * @see \Contrib\Component\File\Client\AbstractFileReader::createLineReader()
      */
-    protected function createLineHandler($handle, $format = null, $type = null)
+    protected function createLineReader($handle, $format = null, $type = null)
     {
         return new LineReader($handle);
     }

@@ -2,12 +2,19 @@
 namespace Contrib\Component\File\Client\Generic;
 
 use Contrib\Component\File\Client\Plain\FileReader;
-
+use Contrib\Component\File\Client\AbstractGenericFileReader;
 use Contrib\Component\File\FileHandler\Plain\Reader as LineReader;
 use Contrib\Component\File\FileHandler\Generic\Reader as GenericLineReader;
 
-class GenericFileReader extends FileReader
+/**
+ * Generic file reader.
+ *
+ * @author Kitamura Satoshi <with.no.parachute@gmail.com>
+ */
+class GenericFileReader extends AbstractGenericFileReader
 {
+    // API
+
     /**
      * Return file content (file_get_contents() function wrapper).
      *
@@ -16,7 +23,11 @@ class GenericFileReader extends FileReader
      */
     public function readAs($format, $type = null)
     {
-        $content = $this->read();
+        if (!isset($this->fileClient)) {
+            $this->fileClient = $this->createFileClient();
+        }
+
+        $content = $this->fileClient->read();
 
         if (!is_string($content)) {
             return false;
@@ -49,38 +60,15 @@ class GenericFileReader extends FileReader
         return $lines;
     }
 
-
-    /**
-     * Return file line (fgets() function wrapper).
-     *
-     * @param integer $length Length to read.
-     * @return string File contents.
-     * @throws \RuntimeException Throw on failure if $throwException is set to true.
-     */
-    protected function readLineAs($format, $type = null, $length = null)
-    {
-        if (!isset($this->lineReader)) {
-            $handle = $this->file->openForRead();
-
-            if ($handle === false) {
-                return false;
-            }
-
-            $this->lineReader = $this->createReader($handle, $format, $type);
-        }
-
-        return $this->lineReader->read($length);
-    }
-
     // internal method
 
     /**
-     * Parse lines.
+     * Decode lines.
      *
-     * @param string $lines Line.
+     * @param array $lines Lines.
      * @return array Parsed data.
      */
-    protected function decode($lines, $format)
+    protected function decode(array $lines, $format)
     {
         $parsedLines = array();
 
@@ -92,12 +80,12 @@ class GenericFileReader extends FileReader
     }
 
     /**
-     * Parse lines.
+     * Deserialize lines.
      *
-     * @param string $lines Line.
+     * @param array $lines Lines.
      * @return array Parsed data.
      */
-    protected function deserialize($lines, $type, $format)
+    protected function deserialize(array $lines, $type, $format)
     {
         $parsedLines = array();
 
@@ -108,17 +96,63 @@ class GenericFileReader extends FileReader
         return $parsedLines;
     }
 
-    // create line handler
+    /**
+     * Return file line (fgets() function wrapper).
+     *
+     * @param integer $length Length to read.
+     * @return string File contents.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     */
+    protected function readLineAs($format, $type = null, $length = null)
+    {
+        if (!$this->initReader($format, $type)) {
+            return false;
+        }
+
+        return $this->lineHandler->read($length);
+    }
 
     /**
      * {@inheritdoc}
      *
-     * @see \Contrib\Component\File\Client\FileClient::createReader()
+     * @see \Contrib\Component\File\Client\AbstractGenericFileClient::createFileClient()
      */
-    protected function createReader($handle, $format = null, $type = null)
+    protected function createFileClient()
+    {
+        return new FileReader($this->file->getPath(), $this->options);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Contrib\Component\File\Client\AbstractGenericFileReader::createLineReader()
+     */
+    protected function createLineReader($handle, $format = null, $type = null)
     {
         $lineReader = new LineReader($handle);
 
         return new GenericLineReader($lineReader, $this->serializer, $format, $type);
+    }
+
+    /**
+     * Initialize generic line reader.
+     *
+     * @param string $format
+     * @param string $type
+     * @return boolean
+     */
+    protected function initReader($format = null, $type = null)
+    {
+        if (!isset($this->lineHandler)) {
+            $handle = $this->file->openForRead();
+
+            if ($handle === false) {
+                return false;
+            }
+
+            $this->lineHandler = $this->createLineReader($handle, $format, $type);
+        }
+
+        return true;
     }
 }

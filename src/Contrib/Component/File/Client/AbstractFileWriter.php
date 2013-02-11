@@ -27,7 +27,20 @@ abstract class AbstractFileWriter extends AbstractFileClient
      * @param integer $length Length to write.
      * @return integer Number of bytes written to the file.
      */
-    abstract public function writeLines(array $lines, $length = null);
+    public function writeLines(array $lines, $length = null)
+    {
+        if (!$this->initWriter()) {
+            return false;
+        }
+
+        $bytes = 0;
+
+        foreach ($lines as $line) {
+            $bytes += $this->lineHandler->write($line, $length);
+        }
+
+        return $bytes;
+    }
 
     // internal method
 
@@ -39,13 +52,13 @@ abstract class AbstractFileWriter extends AbstractFileClient
     abstract protected function initWriter($format = null);
 
     /**
-     * Create Writer object.
+     * Create line writer object.
      *
      * @param resource $handle File handle.
      * @param string   $format File format.
      * @return \Contrib\Component\File\FileHandler\Plain\Writer
      */
-    protected function createWriter($handle, $format = null)
+    protected function createLineWriter($handle, $format = null)
     {
         return new LineWriter($handle, $this->options['newLine']);
     }

@@ -26,26 +26,6 @@ class FileWriter extends AbstractFileWriter
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @see \Contrib\Component\File\Client\AbstractFileWriter::writeLines()
-     */
-    public function writeLines(array $lines, $length = null)
-    {
-        if (!$this->initWriter()) {
-            return false;
-        }
-
-        $bytes = 0;
-
-        foreach ($lines as $line) {
-            $bytes += $this->lineHandler->write($line, $length);
-        }
-
-        return $bytes;
-    }
-
     // internal method
 
     /**
@@ -62,7 +42,7 @@ class FileWriter extends AbstractFileWriter
                 return false;
             }
 
-            $this->lineHandler = $this->createWriter($handle, $format);
+            $this->lineHandler = $this->createLineWriter($handle, $format);
         }
 
         return true;
