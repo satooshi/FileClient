@@ -1,8 +1,9 @@
 <?php
 namespace Contrib\Component\File\Client\Generic;
 
-use Contrib\Component\Serializer\Factory;
+require_once 'SerializableEntity.php';
 
+use Contrib\Component\Serializer\Factory;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -188,31 +189,5 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObjectWithoutSerializer($this->path);
         $this->object->readLinesAs('json');
-    }
-}
-
-class SerializableEntity
-{
-    protected $id;
-    protected $name;
-
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    public function getName()
-    {
-        return $this->name;
     }
 }
