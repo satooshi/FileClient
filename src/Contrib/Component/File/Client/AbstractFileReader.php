@@ -28,7 +28,7 @@ abstract class AbstractFileReader extends AbstractFileClient
     /**
      * Create line handler object.
      *
-     * @param resource $handle
+     * @param resource $handle File handle.
      * @return \Contrib\Component\File\FileHandler\Plain\Iterator
      */
     abstract protected function createLineReader($handle);
@@ -56,7 +56,7 @@ abstract class AbstractFileReader extends AbstractFileClient
     /**
      * Trim line.
      *
-     * @param string $line
+     * @param string $line Triming string.
      * @return string
      */
     protected function trimLine($line)

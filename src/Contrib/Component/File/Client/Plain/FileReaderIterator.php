@@ -8,6 +8,15 @@ use Contrib\Component\File\FileHandler\AbstractFileHandler;
 /**
  * File reader iterator.
  *
+ * options:
+ *
+ * * newLine: string New line to be written (Default is PHP_EOL).
+ * * throwException: boolean Whether to throw exception.
+ * * autoDetectLineEnding: boolean Whether to use auto_detect_line_endings.
+ * * skipEmptyCount: Whether to skip count on empty line.
+ * * limit: integer Count of the limit.
+ * * offset: integer Offset of the limit.
+ *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
 class FileReaderIterator extends AbstractFileReader
@@ -36,7 +45,7 @@ class FileReaderIterator extends AbstractFileReader
         parent::__construct($path, $options);
     }
 
-    // iterate lines
+    // API
 
     /**
      * Apply a callback to every line except for empty line.
@@ -74,8 +83,6 @@ class FileReaderIterator extends AbstractFileReader
 
     // internal method
 
-    // create line handler
-
     /**
      * Create LineIterator.
      *
@@ -85,7 +92,7 @@ class FileReaderIterator extends AbstractFileReader
      * @return \Iterator LimitIterator if limit specified, LineIterator otherwise.
      * @throws \RuntimeException Throw on failure if $throwException is set to true.
      */
-    protected function createLineIterator($skipEmptyCount, $limit = -1, $offset = 0)
+    protected function createLineIterator($skipEmptyCount, $limit = 0, $offset = 0)
     {
         if (!$this->initReader()) {
             return false;
@@ -193,7 +200,7 @@ class FileReaderIterator extends AbstractFileReader
         }
 
         if (!is_int($limit)) {
-            $limit = -1;
+            $limit = 0;
         }
 
         return $limit;

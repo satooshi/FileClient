@@ -6,6 +6,12 @@ use Contrib\Component\File\File;
 /**
  * Abstract file client.
  *
+ * options:
+ *
+ * * newLine: string New line to be written (Default is PHP_EOL).
+ * * throwException: boolean Whether to throw exception.
+ * * autoDetectLineEnding: boolean Whether to use auto_detect_line_endings.
+ *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
 abstract class AbstractFileClient
@@ -24,10 +30,6 @@ abstract class AbstractFileClient
 
     /**
      * Options.
-     *
-     * * newLine: string New line to be written (Default is PHP_EOL).
-     * * throwException: boolean Whether to throw exception.
-     * * autoDetectLineEnding: boolean Whether to use auto_detect_line_endings.
      *
      * @var array
      */
