@@ -5,11 +5,11 @@ use Contrib\Component\Serializer\Factory;
 use Symfony\Component\Serializer\Serializer;
 
 /**
- * Generic file writer.
+ * Generic file appender.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class GenericFileWriterTest extends \PHPUnit_Framework_TestCase
+class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -88,7 +88,7 @@ class GenericFileWriterTest extends \PHPUnit_Framework_TestCase
 
     protected function createObjectWithoutSerializer($path, $throwException = true)
     {
-        return new GenericFileWriter($path, array('throwException' => $throwException));
+        return new GenericFileAppender($path, array('throwException' => $throwException));
     }
 
     // writeAs()
