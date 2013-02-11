@@ -2,6 +2,7 @@
 namespace Contrib\Component\File\FileHandler\Generic;
 
 use Contrib\Component\File\FileHandler\Plain\Reader as LineReader;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * Generic line reader.
@@ -20,21 +21,33 @@ class Reader
     /**
      * Serializer object.
      *
-     * @var Serializer
+     * @var Symfony\Component\Serializer\Serializer
      */
     protected $serializer;
 
+    /**
+     * File format.
+     *
+     * @var string
+     */
     protected $format;
 
+    /**
+     * Deserializing class name.
+     *
+     * @var string
+     */
     protected $type;
 
     /**
      * Constructor.
      *
-     * @param Contrib\Component\File\FileHandler\Plain\Reader $reader
-     * @param Serializer $serializer
+     * @param Contrib\Component\File\FileHandler\Plain\Reader $reader     Line reader.
+     * @param Symfony\Component\Serializer\Serializer         $serializer Serializer.
+     * @param string                                          $format     File format.
+     * @param string                                          $type       Deserializing class name.
      */
-    public function __construct(LineReader $reader, $serializer, $format, $type = null)
+    public function __construct(LineReader $reader, Serializer $serializer, $format, $type = null)
     {
         $this->reader     = $reader;
         $this->serializer = $serializer;

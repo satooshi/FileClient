@@ -13,14 +13,14 @@ class Iterator extends LineIterator
     /**
      * Reader object.
      *
-     * @var Contrib\Component\File\FileHandler\Serializer\Reader
+     * @var Contrib\Component\File\FileHandler\Generic\Reader
      */
     protected $reader;
 
     /**
      * Constructor.
      *
-     * @param Contrib\Component\File\FileHandler\Serializer\Reader $reader
+     * @param Contrib\Component\File\FileHandler\Generic\Reader $reader
      */
     public function __construct(Reader $reader)
     {

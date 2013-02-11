@@ -2,6 +2,7 @@
 namespace Contrib\Component\File\FileHandler\Generic;
 
 use Contrib\Component\File\FileHandler\Plain\Writer as LineWriter;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * Generic line writer.
@@ -20,17 +21,17 @@ class Writer
     /**
      * Serializer object.
      *
-     * @var Serializer
+     * @var Symfony\Component\Serializer\Serializer
      */
     protected $serializer;
 
     /**
      * Constructor.
      *
-     * @param Contrib\Component\File\FileHandler\Plain\Writer $writer
-     * @param Serializer $serializer
+     * @param Contrib\Component\File\FileHandler\Plain\Writer $writer     Line writer.
+     * @param Symfony\Component\Serializer\Serializer         $serializer Serializer.
      */
-    public function __construct(LineWriter $writer, $serializer, $format)
+    public function __construct(LineWriter $writer, Serializer $serializer, $format)
     {
         $this->writer     = $writer;
         $this->serializer = $serializer;
