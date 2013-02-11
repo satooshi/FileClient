@@ -31,16 +31,14 @@ abstract class AbstractFileReader extends AbstractFileClient
      * @param resource $handle
      * @return \Contrib\Component\File\FileHandler\Plain\Iterator
      */
-    abstract protected function createLineReader($handle, $format = null, $type = null);
+    abstract protected function createLineReader($handle);
 
     /**
      * Initialize line reader.
      *
-     * @param string $format File format.
-     * @param string $type   Deserializing class name.
      * @return boolean true on success, false on failure.
      */
-    protected function initReader($format = null, $type = null)
+    protected function initReader()
     {
         if (!isset($this->lineHandler)) {
             $handle = $this->file->openForRead();
@@ -49,7 +47,7 @@ abstract class AbstractFileReader extends AbstractFileClient
                 return false;
             }
 
-            $this->lineHandler = $this->createLineReader($handle, $format, $type);
+            $this->lineHandler = $this->createLineReader($handle);
         }
 
         return true;

@@ -62,7 +62,7 @@ class FileReader extends AbstractFileReader
      *
      * @see \Contrib\Component\File\Client\AbstractFileReader::createLineReader()
      */
-    protected function createLineReader($handle, $format = null, $type = null)
+    protected function createLineReader($handle)
     {
         return new LineReader($handle);
     }
