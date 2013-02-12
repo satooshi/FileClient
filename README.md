@@ -58,14 +58,21 @@ use Contrib\Component\File\Client\Plain\FileReader;
 // construction
 $path = '/path/to/file';
 $client = new FileReader($path);
+```
 
-// default parameters
+```php
+<?php
+
+use Contrib\Component\File\Client\Plain\FileReader;
+
+// default options
 $options = array(
     'newLine'              => PHP_EOL,
     'throwException'       => true, // throw exception on runtime error
     'autoDetectLineEnding' => true, // better line ending handling on Mac
 );
 
+// construct with options
 $client = new FileReader($path, $options);
 ```
 
@@ -125,12 +132,25 @@ $client->writeLines($lines);
 ```
 
 ### walk
+
+FileReaderIterator object can walk through read file.
+
 ```php
 <?php
 
 use Contrib\Component\File\Client\Plain\FileReaderIterator;
 
-// default parameters
+// construction
+$path = '/path/to/file';
+$client = new FileReaderIterator($path);
+```
+
+```php
+<?php
+
+use Contrib\Component\File\Client\Plain\FileReaderIterator;
+
+// default options
 $options = array(
     'newLine'              => PHP_EOL,
     'throwException'       => true, // throw exception on runtime error
@@ -140,8 +160,18 @@ $options = array(
     'offset'               => 0,
 );
 
-$path = '/path/to/file';
+// construct with options
 $client = new FileReaderIterator($path, $options);
+```
+
+```php
+<?php
+
+use Contrib\Component\File\Client\Plain\FileReaderIterator;
+
+// construction
+$path = '/path/to/file';
+$client = new FileReaderIterator($path);
 
 // walk
 $client->walk(
@@ -153,18 +183,151 @@ $client->walk(
 );
 ```
 
-## LTSV file
+## File format
 
-Labeled Tab-separated Values (LTSV) file format is introduced by Hatena engineer ([blog post in Japanese](http://stanaka.hatenablog.com/entry/2013/02/05/214833)) and is variant TSV file format. You can find a suitable library for several programming language and see description at [ltsv.org](http://ltsv.org/).
+Currently support json, xml, ltsv file format. Object serialization is also supported by Symfony Serializer component.
+
+### construction
+```php
+<?php
+
+use Contrib\Component\File\Client\Generic\GenericFileReader;
+
+// construction
+$path = '/path/to/file';
+$client = new GenericFileReader($path);
+```
+```php
+<?php
+
+use Contrib\Component\File\Client\Generic\GenericFileReader;
+
+// default options
+$options = array(
+    'newLine'              => PHP_EOL,
+    'throwException'       => true, // throw exception on runtime error
+    'autoDetectLineEnding' => true, // better line ending handling on Mac
+);
+
+// construct with options
+$client = new GenericFileReader($path, $options);
+```
+
+### read
+```php
+<?php
+
+use Contrib\Component\File\Client\Generic\GenericFileReader;
+
+$path = '/path/to/file';
+$client = new GenericFileReader($path);
+
+// read as json
+$content = $client->readAs('json');
+$lines = $client->readLinesAs('ltsv');
+
+// read as json to object
+$content = $client->readAs('json', 'Entity');
+$lines = $client->readLinesAs('ltsv', 'Entity');
+```
+
+### write
+```php
+<?php
+
+use Contrib\Component\File\Client\Generic\GenericFileWriter;
+
+$path = '/path/to/file';
+$client = new GenericFileWriter($path);
+
+// write Entity
+$content = new Entity();
+$client->writeAs($content);
+
+$lines = array(
+    new Entity(),
+    new Entity(),
+);
+$client->writeLinesAs($lines);
+```
+
+### append
+```php
+<?php
+
+use Contrib\Component\File\Client\Generic\GenericFileAppender;
+
+$path = '/path/to/file';
+$client = new GenericFileAppender($path);
+
+// append Entity
+$content = new Entity();
+$client->writeAs($content);
+
+$lines = array(
+    new Entity(),
+    new Entity(),
+);
+$client->writeLinesAs($lines);
+```
+
+### walk
+```php
+<?php
+
+use Contrib\Component\File\Client\Plain\GenericFileReaderIterator;
+
+// construction
+$path = '/path/to/file';
+$client = new GenericFileReaderIterator($path);
+```
 
 ```php
 <?php
 
-use Contrib\Component\Serializer\Factory;
-use Contrib\Component\File\Client\GenericFileClient;
+use Contrib\Component\File\Client\Plain\GenericFileReaderIterator;
 
-$path = '/path/to/log.ltsv';
-$serializer = Factory::createSerializer();
-$client = new GenericFileClient($path, $serializer);
+// default options
+$options = array(
+    'newLine'              => PHP_EOL,
+    'throwException'       => true, // throw exception on runtime error
+    'autoDetectLineEnding' => true, // better line ending handling on Mac
+    'skipEmptyCount'       => true,
+    'limit'                => 0,
+    'offset'               => 0,
+);
 
+// construct with options
+$client = new GenericFileReaderIterator($path, $options);
+```
+
+```php
+<?php
+
+use Contrib\Component\File\Client\Plain\GenericFileReaderIterator;
+
+// construction
+$path = '/path/to/file';
+$client = new GenericFileReaderIterator($path);
+
+// walk as json
+$client->walkAs(
+    funtion ($line, $numLine) {
+        if ($numLine === 1) {
+            // do something at line 1
+       }
+    },
+    'json'
+);
+
+// walk as json to object
+$client->walkAs(
+    funtion ($line, $numLine) {
+        if ($numLine === 1) {
+            // do something at line 1
+       }
+    },
+    'json',
+    'Entity'
+);
 ```
