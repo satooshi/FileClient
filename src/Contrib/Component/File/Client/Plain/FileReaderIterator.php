@@ -124,8 +124,10 @@ class FileReaderIterator extends AbstractFileReader
      */
     protected function iterate($callback, \Iterator $iterator)
     {
-        foreach ($iterator as $numLine => $data) {
-            $line = $this->trimLine($data);
+        foreach ($iterator as $numLine => $line) {
+            if (is_string($line)) {
+                $line = $this->trimLine($line);
+            }
 
             if (empty($line)) {
                 // skip empty line
@@ -152,8 +154,10 @@ class FileReaderIterator extends AbstractFileReader
     {
         $readLine = 0;
 
-        foreach ($iterator as $numLine => $data) {
-            $line = $this->trimLine($data);
+        foreach ($iterator as $numLine => $line) {
+            if (is_string($line)) {
+                $line = $this->trimLine($line);
+            }
 
             if (empty($line)) {
                 // skip empty line
@@ -243,7 +247,7 @@ class FileReaderIterator extends AbstractFileReader
      * @param AbstractFileHandler $lineHandler
      * @return void
      */
-    public function setLineHandler(AbstractFileHandler $lineHandler)
+    public function setLineHandler($lineHandler)
     {
         $this->lineHandler = $lineHandler;
     }

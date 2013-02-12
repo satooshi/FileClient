@@ -3,6 +3,7 @@ namespace Contrib\Component\File\Client\Generic;
 
 use Contrib\Component\File\Client\Plain\FileReaderIterator;
 use Contrib\Component\File\Client\AbstractGenericFileReader;
+use Contrib\Component\File\FileHandler\Plain\Reader as LineReader;
 use Contrib\Component\File\FileHandler\Plain\Iterator as LineIterator;
 use Contrib\Component\File\FileHandler\Generic\Iterator as GenericLineIterator;
 use Contrib\Component\File\FileHandler\Generic\Reader as GenericLineReader;
@@ -15,6 +16,7 @@ use Contrib\Component\File\FileHandler\Generic\Reader as GenericLineReader;
 class GenericFileReaderIterator extends AbstractGenericFileReader
 {
     // API
+    //TODO rename to walkAs()
 
     /**
      * Apply a callback to every line except for empty line.
@@ -63,8 +65,25 @@ class GenericFileReaderIterator extends AbstractGenericFileReader
      */
     protected function createLineReader($handle, $format, $type = null)
     {
-        $lineReader = new GenericLineReader($handle, $this->serializer, $format, $type);
+        $lineReader        = new LineReader($handle);
+        $genericLineReader = new GenericLineReader($lineReader, $this->serializer, $format, $type);
 
-        return new GenericLineIterator($lineReader);
+        return new GenericLineIterator($genericLineReader);
+    }
+
+    // accessor
+
+    /**
+     * Return whether the client suspended to read file.
+     *
+     * @return boolean
+     */
+    public function isSuspended()
+    {
+        if (isset($this->fileClient)) {
+            return $this->fileClient->isSuspended();
+        }
+
+        return null;
     }
 }

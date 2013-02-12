@@ -1,14 +1,17 @@
 <?php
-namespace Contrib\Component\File\Client\Plain;
+namespace Contrib\Component\File\Client\Generic;
 
-use Contrib\Component\File\FileHandler\Plain\Reader;
+require_once 'SerializableEntity.php';
+
+use Contrib\Component\Serializer\Factory;
+use Symfony\Component\Serializer\Serializer;
 
 /**
- * File reader iterator.
+ * Generic file reader iterator.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
+class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -18,7 +21,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->path = './hello.txt';
+        $this->path = './hello.json';
         $this->unreadablePath = './unreadable';
 
         if (is_file($this->path)) {
@@ -28,8 +31,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
             unlink($this->unreadablePath);
         }
 
-        $this->content = "hello\n \nworld!";
-        touch($this->path);
+        $this->content = '{"id":1,"name":"hoge"}' . PHP_EOL . PHP_EOL . '{"id":2,"name":"hoge"}';
         file_put_contents($this->path, $this->content);
 
         touch($this->unreadablePath);
@@ -48,6 +50,15 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
 
     protected function createObject($path, $throwException = true, $skipEmptyCount = true, $limit = 0, $offset = 0)
     {
+        $serializer = Factory::createSerializer();
+        $object = $this->createObjectWithoutSerializer($path, $throwException, $skipEmptyCount, $limit, $offset);
+        $object->setSerializer($serializer);
+
+        return $object;
+    }
+
+    protected function createObjectWithoutSerializer($path, $throwException = true, $skipEmptyCount = true, $limit = 0, $offset = 0)
+    {
         $options = array(
             'throwException' => $throwException,
             'skipEmptyCount' => $skipEmptyCount,
@@ -55,7 +66,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
             'offset'         => $offset,
         );
 
-        return new FileReaderIterator($path, $options);
+        return new GenericFileReaderIterator($path, $options);
     }
 
     // walk()
@@ -67,7 +78,8 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObject($this->path);
 
-        $actual = $this->object->walk(function(){});
+        $expected = $this->content;
+        $actual = $this->object->walk(function(){}, 'json');
 
         $this->assertNotNull($actual);
     }
@@ -79,7 +91,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObject($this->path, true, false, 1);
 
-        $actual = $this->object->walk(function(){});
+        $actual = $this->object->walk(function(){}, 'json');
 
         $this->assertNotNull($actual);
         $this->assertTrue($this->object->isSuspended());
@@ -92,11 +104,12 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObject($this->path, true, false, 3);
 
-        $actual = $this->object->walk(function(){});
+        $actual = $this->object->walk(function(){}, 'json');
 
         $this->assertNotNull($actual);
         $this->assertFalse($this->object->isSuspended());
     }
+
 
     /**
      * @test
@@ -105,7 +118,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObject($this->path, true, true, 1);
 
-        $actual = $this->object->walk(function(){});
+        $actual = $this->object->walk(function(){}, 'json');
 
         $this->assertNotNull($actual);
         $this->assertTrue($this->object->isSuspended());
@@ -118,7 +131,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObject($this->path, true, true, 3);
 
-        $actual = $this->object->walk(function(){});
+        $actual = $this->object->walk(function(){}, 'json');
 
         $this->assertNotNull($actual);
         $this->assertFalse($this->object->isSuspended());
@@ -127,22 +140,22 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function canNotReadIfPathIsNotReadable()
+    public function canNotWalkIfPathIsNotReadable()
     {
         $this->object = $this->createObject($this->unreadablePath, false);
 
-        $this->assertFalse($this->object->walk(function(){}));
+        $this->assertFalse($this->object->walk(function(){}, 'json'));
     }
 
     /**
      * @test
      * @expectedException RuntimeException
      */
-    public function throwRuntimeExceptionOnReadIfPathIsNotReadable()
+    public function throwRuntimeExceptionOnWalkIfPathIsNotReadable()
     {
         $this->object = $this->createObject($this->unreadablePath);
 
-        $this->object->walk(function(){});
+        $this->object->walk(function(){}, 'json');
     }
 
     /**
@@ -152,9 +165,9 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObject($this->path);
 
-        $actual = $this->object->walk(function(){
+        $actual = $this->object->walk(function () {
             return false;
-        });
+        }, 'json');
 
         $this->assertTrue($this->object->isSuspended());
     }
@@ -166,93 +179,33 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObject($this->path, true, true, 10);
 
-        $actual = $this->object->walk(function(){
+        $actual = $this->object->walk(function () {
             return false;
-        });
+        }, 'json');
 
         $this->assertTrue($this->object->isSuspended());
     }
 
-    // limit, offset
 
     /**
      * @test
+     * @expectedException RuntimeException
      */
-    public function invalidLimit()
+    public function throwRuntimeExceptionOnWalkIfSerializerNotSet()
     {
-        $this->object = $this->createObject($this->path, true, true, "");
-
-        $actual = $this->object->walk(function(){});
-
-        $this->assertNotNull($actual);
+        $this->object = $this->createObjectWithoutSerializer($this->path);
+        $this->object->walk(function(){}, 'json');
     }
 
     /**
      * @test
      */
-    public function invalidOffset()
+    public function suspendedIsNullOnConstruction()
     {
-        $this->object = $this->createObject($this->path, true, true, 1, "");
-
-        $actual = $this->object->walk(function(){});
-
-        $this->assertNotNull($actual);
-    }
-
-    /**
-     * @test
-     */
-    public function setLineHandler()
-    {
-        $handle = fopen($this->path, 'r');
-        $lineHandler = new Reader($handle);
+        $this->object = $this->createObjectWithoutSerializer($this->path);
+        $this->assertNull($this->object->isSuspended());
 
         $this->object = $this->createObject($this->path);
-
-        $this->object->setLineHandler($lineHandler);
-
-        $actual = $this->object->getLineHandler();
-
-        $this->assertSame($lineHandler, $actual);
-    }
-
-    // getOptions()
-
-    /**
-     * @test
-     */
-    public function getDefaultOptions()
-    {
-        $this->object = $this->createObject($this->path);
-
-        $expected = array(
-            'newLine'              => PHP_EOL,
-            'throwException'       => true,
-            'autoDetectLineEnding' => true,
-            'skipEmptyCount'       => true,
-            'limit'                => 0,
-            'offset'               => 0,
-        );
-
-        $this->assertEquals($expected, $this->object->getOptions());
-    }
-
-    /**
-     * @test
-     */
-    public function getOptions()
-    {
-        $this->object = $this->createObject($this->path, true, false, 2, 1);
-
-        $expected = array(
-            'newLine'              => PHP_EOL,
-            'throwException'       => true,
-            'autoDetectLineEnding' => true,
-            'skipEmptyCount'       => false,
-            'limit'                => 2,
-            'offset'               => 1,
-        );
-
-        $this->assertEquals($expected, $this->object->getOptions());
+        $this->assertNull($this->object->isSuspended());
     }
 }
