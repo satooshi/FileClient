@@ -48,29 +48,100 @@ $ git clone git@github.com:satooshi/FileClient.git
 # Usage
 
 ## plain text file
+
+### construction
 ```php
 <?php
 
-use Contrib\Component\File\Client\FileClient;
+use Contrib\Component\File\Client\Plain\FileReader;
 
 // construction
 $path = '/path/to/file';
-$client = new FileClient($path);
+$client = new FileReader($path);
 
 // default parameters
-$newLine = PHP_EOL;
-$throwException = true; // throw exception on runtime error
-$autoDetectLineEnding = true; // better line ending handling on Mac
-$client = new FileClient($path);
+$options = array(
+    'newLine'              => PHP_EOL,
+    'throwException'       => true, // throw exception on runtime error
+    'autoDetectLineEnding' => true, // better line ending handling on Mac
+);
+
+$client = new FileReader($path, $options);
+```
+
+### read
+
+```php
+<?php
+
+use Contrib\Component\File\Client\Plain\FileReader;
+
+$path = '/path/to/file';
+$client = new FileReader($path);
 
 // read
 $content = $client->read();
+$lines = $client->readLines();
+```
+
+### write
+```php
+<?php
+
+use Contrib\Component\File\Client\Plain\FileWriter;
+
+$path = '/path/to/file';
+$client = new FileWriter($path);
 
 // write
+$content = 'hello world!';
 $client->write($content);
 
+$lines = array(
+    'line1',
+    'line2',
+);
+$client->writeLines($lines);
+```
+
+### append
+```php
+<?php
+
+use Contrib\Component\File\Client\Plain\FileAppender;
+
+$path = '/path/to/file';
+$client = new FileAppender($path);
+
 // append
-$client->append($content);
+$content = 'hello world!';
+$client->write($content);
+
+$lines = array(
+    'line1',
+    'line2',
+);
+$client->writeLines($lines);
+```
+
+### walk
+```php
+<?php
+
+use Contrib\Component\File\Client\Plain\FileReaderIterator;
+
+// default parameters
+$options = array(
+    'newLine'              => PHP_EOL,
+    'throwException'       => true, // throw exception on runtime error
+    'autoDetectLineEnding' => true, // better line ending handling on Mac
+    'skipEmptyCount'       => true,
+    'limit'                => 0,
+    'offset'               => 0,
+);
+
+$path = '/path/to/file';
+$client = new FileReaderIterator($path, $options);
 
 // walk
 $client->walk(
@@ -79,22 +150,6 @@ $client->walk(
             // do something at line 1
        }
     }
-);
-
-// default parameters
-$skipEmptyCount = true; 
-$limit = -1;  // All lines
-$offset = 0; // read from first line
-
-$client->walk(
-    funtion ($line, $numLine) {
-        if ($numLine === 1) {
-            // do something at line 1
-        }
-    },
-    $skipEmptyCount,
-    $limit,
-    $offset
 );
 ```
 
