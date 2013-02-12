@@ -72,10 +72,8 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
         $this->object = $this->createObject($this->path);
 
         $expected = array(
-            array(
-                'id'   => 1,
-                'name' => 'hoge',
-            ),
+            'id'   => 1,
+            'name' => 'hoge',
         );
         $actual = $this->object->readAs('json');
 
@@ -92,10 +90,9 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
         $className = 'Contrib\Component\File\Client\Generic\SerializableEntity';
         $actual = $this->object->readAs('json', $className);
 
-        $this->assertEquals(1, count($actual));
-        $this->assertInstanceOf($className, $actual[0]);
-        $this->assertEquals(1, $actual[0]->getId());
-        $this->assertEquals('hoge', $actual[0]->getName());
+        $this->assertInstanceOf($className, $actual);
+        $this->assertEquals(1, $actual->getId());
+        $this->assertEquals('hoge', $actual->getName());
     }
 
     /**

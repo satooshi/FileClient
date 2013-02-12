@@ -31,17 +31,17 @@ class GenericFileReader extends AbstractGenericFileReader
             $this->fileClient = $this->createFileClient();
         }
 
-        $lines = $this->fileClient->read(true);
+        $lines = $this->fileClient->read();
 
-        if (!is_array($lines)) {
+        if (!is_string($lines)) {
             return false;
         }
 
         if ($type === null) {
-            return $this->decode($lines, $format);
+            return $this->serializer->decode($lines, $format);
         }
 
-        return $this->deserialize($lines, $type, $format);
+        return $this->serializer->deserialize($lines, $type, $format);
     }
 
     /**
@@ -71,40 +71,6 @@ class GenericFileReader extends AbstractGenericFileReader
     }
 
     // internal method
-
-    /**
-     * Decode lines.
-     *
-     * @param array $lines Lines.
-     * @return array Parsed data.
-     */
-    protected function decode(array $lines, $format)
-    {
-        $parsedLines = array();
-
-        foreach ($lines as $line) {
-            $parsedLines[] = $this->serializer->decode($line, $format);
-        }
-
-        return $parsedLines;
-    }
-
-    /**
-     * Deserialize lines.
-     *
-     * @param array $lines Lines.
-     * @return array Parsed data.
-     */
-    protected function deserialize(array $lines, $type, $format)
-    {
-        $parsedLines = array();
-
-        foreach ($lines as $line) {
-            $parsedLines[] = $this->serializer->deserialize($line, $type, $format);
-        }
-
-        return $parsedLines;
-    }
 
     /**
      * {@inheritdoc}
