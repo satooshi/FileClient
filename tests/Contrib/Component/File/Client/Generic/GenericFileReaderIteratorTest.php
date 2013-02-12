@@ -69,17 +69,17 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
         return new GenericFileReaderIterator($path, $options);
     }
 
-    // walk()
+    // walkAs()
 
     /**
      * @test
      */
-    public function walk()
+    public function walkAsJson()
     {
         $this->object = $this->createObject($this->path);
 
         $expected = $this->content;
-        $actual = $this->object->walk(function(){}, 'json');
+        $actual = $this->object->walkAs(function(){}, 'json');
 
         $this->assertNotNull($actual);
     }
@@ -87,11 +87,11 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function walkNotSkip1()
+    public function walkAsJsonNotSkip1()
     {
         $this->object = $this->createObject($this->path, true, false, 1);
 
-        $actual = $this->object->walk(function(){}, 'json');
+        $actual = $this->object->walkAs(function(){}, 'json');
 
         $this->assertNotNull($actual);
         $this->assertTrue($this->object->isSuspended());
@@ -100,11 +100,11 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function walkNotSkip3()
+    public function walkAsJsonNotSkip3()
     {
         $this->object = $this->createObject($this->path, true, false, 3);
 
-        $actual = $this->object->walk(function(){}, 'json');
+        $actual = $this->object->walkAs(function(){}, 'json');
 
         $this->assertNotNull($actual);
         $this->assertFalse($this->object->isSuspended());
@@ -114,11 +114,11 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function walkLimit1()
+    public function walkAsJsonLimit1()
     {
         $this->object = $this->createObject($this->path, true, true, 1);
 
-        $actual = $this->object->walk(function(){}, 'json');
+        $actual = $this->object->walkAs(function(){}, 'json');
 
         $this->assertNotNull($actual);
         $this->assertTrue($this->object->isSuspended());
@@ -127,11 +127,11 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function walkLimit3()
+    public function walkAsJsonLimit3()
     {
         $this->object = $this->createObject($this->path, true, true, 3);
 
-        $actual = $this->object->walk(function(){}, 'json');
+        $actual = $this->object->walkAs(function(){}, 'json');
 
         $this->assertNotNull($actual);
         $this->assertFalse($this->object->isSuspended());
@@ -144,7 +144,7 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObject($this->unreadablePath, false);
 
-        $this->assertFalse($this->object->walk(function(){}, 'json'));
+        $this->assertFalse($this->object->walkAs(function(){}, 'json'));
     }
 
     /**
@@ -155,17 +155,17 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObject($this->unreadablePath);
 
-        $this->object->walk(function(){}, 'json');
+        $this->object->walkAs(function(){}, 'json');
     }
 
     /**
      * @test
      */
-    public function stopWalkIfCallbackReturnFalse()
+    public function stopWalkAsJsonIfCallbackReturnFalse()
     {
         $this->object = $this->createObject($this->path);
 
-        $actual = $this->object->walk(function () {
+        $actual = $this->object->walkAs(function () {
             return false;
         }, 'json');
 
@@ -175,11 +175,11 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function stopWalkLimitIfCallbackReturnFalse()
+    public function stopWalkAsJsonLimitIfCallbackReturnFalse()
     {
         $this->object = $this->createObject($this->path, true, true, 10);
 
-        $actual = $this->object->walk(function () {
+        $actual = $this->object->walkAs(function () {
             return false;
         }, 'json');
 
@@ -194,7 +194,7 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     public function throwRuntimeExceptionOnWalkIfSerializerNotSet()
     {
         $this->object = $this->createObjectWithoutSerializer($this->path);
-        $this->object->walk(function(){}, 'json');
+        $this->object->walkAs(function(){}, 'json');
     }
 
     /**

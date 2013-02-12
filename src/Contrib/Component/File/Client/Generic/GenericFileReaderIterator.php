@@ -26,7 +26,7 @@ class GenericFileReaderIterator extends AbstractGenericFileReader
      * @return \Iterator|false Iterator on success, false on failure.
      * @throws \RuntimeException Throw on failure if $throwException is set to true.
      */
-    public function walk($callback, $format, $type = null)
+    public function walkAs($callback, $format, $type = null)
     {
         if (!isset($this->serializer)) {
             throw new \RuntimeException('Serializer is not set.');
