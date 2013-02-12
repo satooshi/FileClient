@@ -31,13 +31,11 @@ class GenericFileReader extends AbstractGenericFileReader
             $this->fileClient = $this->createFileClient();
         }
 
-        $content = $this->fileClient->read();
+        $lines = $this->fileClient->read(true);
 
-        if (!is_string($content)) {
+        if (!is_array($lines)) {
             return false;
         }
-
-        $lines = explode($this->options['newLine'], $content);
 
         if ($type === null) {
             return $this->decode($lines, $format);

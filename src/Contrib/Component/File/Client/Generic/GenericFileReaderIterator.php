@@ -16,7 +16,6 @@ use Contrib\Component\File\FileHandler\Generic\Reader as GenericLineReader;
 class GenericFileReaderIterator extends AbstractGenericFileReader
 {
     // API
-    //TODO rename to walkAs()
 
     /**
      * Apply a callback to every line except for empty line.

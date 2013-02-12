@@ -89,7 +89,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function readExploded()
     {
-        $expected = array("hello\n", "world!");
+        $expected = array("hello", "world!");
         $actual = $this->object->read(true);
 
         $this->assertEquals($expected, $actual);

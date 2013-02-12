@@ -24,7 +24,7 @@ class FileReader extends AbstractFileReader
     {
         if ($this->file->isReadable()) {
             if ($explode) {
-                return file($this->file->getPath());
+                return file($this->file->getPath(), FILE_IGNORE_NEW_LINES);
             }
 
             return file_get_contents($this->file->getPath());
