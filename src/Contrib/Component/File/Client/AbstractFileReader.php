@@ -1,8 +1,6 @@
 <?php
 namespace Contrib\Component\File\Client;
 
-use Contrib\Component\String\Encoding\Utf8;
-
 /**
  * Abstract file reader.
  *
@@ -61,6 +59,6 @@ abstract class AbstractFileReader extends AbstractFileClient
      */
     protected function trimLine($line)
     {
-        return trim(Utf8::auto($line));
+        return trim(mb_convert_encoding($line, 'UTF-8', 'auto'));
     }
 }
