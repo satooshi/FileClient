@@ -16,26 +16,17 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
     protected $object;
 
     protected $content;
-    protected $path;
-    protected $unreadablePath;
+    protected $path = './hello.json';
+    protected $unreadablePath = './unreadable';
 
     protected function setUp()
     {
-        $this->path = './hello.json';
-        $this->unreadablePath = './unreadable';
-
         if (is_file($this->path)) {
             unlink($this->path);
-        }
-        if (is_file($this->unreadablePath)) {
-            unlink($this->unreadablePath);
         }
 
         $this->content = '{"id":1, "name":"hoge"}';
         file_put_contents($this->path, $this->content);
-
-        touch($this->unreadablePath);
-        chmod($this->unreadablePath, 0377);
     }
 
     protected function tearDown()
@@ -60,6 +51,16 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
     protected function createObjectWithoutSerializer($path, $throwException = true)
     {
         return new GenericFileReader($path, array('throwException' => $throwException));
+    }
+
+    protected function touchUnreadableFile()
+    {
+        if (is_file($this->unreadablePath)) {
+            unlink($this->unreadablePath);
+        }
+
+        touch($this->unreadablePath);
+        chmod($this->unreadablePath, 0377);
     }
 
     // readAs()
@@ -100,6 +101,8 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function canNotReadAsJsonIfPathIsNotReadable()
     {
+        $this->touchUnreadableFile();
+
         $this->object = $this->createObject($this->unreadablePath, false);
 
         $className = 'Contrib\Component\File\Client\Generic\SerializableEntity';
@@ -114,6 +117,8 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function throwRuntimeExceptionOnReadAsJsonIfPathIsNotReadable()
     {
+        $this->touchUnreadableFile();
+
         $this->object = $this->createObject($this->unreadablePath, true);
 
         $className = 'Contrib\Component\File\Client\Generic\SerializableEntity';
@@ -157,6 +162,8 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function canNotReadLinesAsJsonIfPathIsNotReadable()
     {
+        $this->touchUnreadableFile();
+
         $this->object = $this->createObject($this->unreadablePath, false);
 
         $className = 'Contrib\Component\File\Client\Generic\SerializableEntity';
@@ -171,6 +178,8 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function throwRuntimeExceptionOnReadLinesAsJsonIfPathIsNotReadable()
     {
+        $this->touchUnreadableFile();
+
         $this->object = $this->createObject($this->unreadablePath, true);
 
         $className = 'Contrib\Component\File\Client\Generic\SerializableEntity';

@@ -13,27 +13,17 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     protected $object;
 
     protected $content;
-    protected $path;
-    protected $unreadablePath;
+    protected $path = './hello.txt';
+    protected $unreadablePath = './unreadable';
 
     protected function setUp()
     {
-        $this->path = './hello.txt';
-        $this->unreadablePath = './unreadable';
-
         if (is_file($this->path)) {
             unlink($this->path);
         }
-        if (is_file($this->unreadablePath)) {
-            unlink($this->unreadablePath);
-        }
 
         $this->content = "hello\n \nworld!";
-        touch($this->path);
         file_put_contents($this->path, $this->content);
-
-        touch($this->unreadablePath);
-        chmod($this->unreadablePath, 0377);
     }
 
     protected function tearDown()
@@ -56,6 +46,16 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
         );
 
         return new FileReaderIterator($path, $options);
+    }
+
+    protected function touchUnreadableFile()
+    {
+        if (is_file($this->unreadablePath)) {
+            unlink($this->unreadablePath);
+        }
+
+        touch($this->unreadablePath);
+        chmod($this->unreadablePath, 0377);
     }
 
     // walk()
@@ -129,6 +129,8 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function canNotReadIfPathIsNotReadable()
     {
+        $this->touchUnreadableFile();
+
         $this->object = $this->createObject($this->unreadablePath, false);
 
         $this->assertFalse($this->object->walk(function(){}));
@@ -140,6 +142,8 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function throwRuntimeExceptionOnReadIfPathIsNotReadable()
     {
+        $this->touchUnreadableFile();
+
         $this->object = $this->createObject($this->unreadablePath);
 
         $this->object->walk(function(){});

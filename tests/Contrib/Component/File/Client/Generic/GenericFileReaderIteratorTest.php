@@ -16,26 +16,17 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
     protected $object;
 
     protected $content;
-    protected $path;
-    protected $unreadablePath;
+    protected $path = './hello.json';
+    protected $unreadablePath = './unreadable';
 
     protected function setUp()
     {
-        $this->path = './hello.json';
-        $this->unreadablePath = './unreadable';
-
         if (is_file($this->path)) {
             unlink($this->path);
-        }
-        if (is_file($this->unreadablePath)) {
-            unlink($this->unreadablePath);
         }
 
         $this->content = '{"id":1,"name":"hoge"}' . PHP_EOL . PHP_EOL . '{"id":2,"name":"hoge"}';
         file_put_contents($this->path, $this->content);
-
-        touch($this->unreadablePath);
-        chmod($this->unreadablePath, 0377);
     }
 
     protected function tearDown()
@@ -67,6 +58,16 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
         );
 
         return new GenericFileReaderIterator($path, $options);
+    }
+
+    protected function touchUnreadableFile()
+    {
+        if (is_file($this->unreadablePath)) {
+            unlink($this->unreadablePath);
+        }
+
+        touch($this->unreadablePath);
+        chmod($this->unreadablePath, 0377);
     }
 
     // walkAs()
@@ -142,6 +143,8 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function canNotWalkIfPathIsNotReadable()
     {
+        $this->touchUnreadableFile();
+
         $this->object = $this->createObject($this->unreadablePath, false);
 
         $this->assertFalse($this->object->walkAs(function(){}, 'json'));
@@ -153,6 +156,8 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function throwRuntimeExceptionOnWalkIfPathIsNotReadable()
     {
+        $this->touchUnreadableFile();
+
         $this->object = $this->createObject($this->unreadablePath);
 
         $this->object->walkAs(function(){}, 'json');
