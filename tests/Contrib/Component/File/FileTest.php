@@ -10,64 +10,20 @@ class FileTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
-    protected $path;
-    protected $notFoundPath;
-    protected $unreadablePath;
-    protected $dir;
-    protected $notFoundDir;
-    protected $unwritableDir;
-    protected $unwritablePath;
+    protected $path = './hello.txt';
+    protected $unreadablePath = './unreadable';
+    protected $unwritablePath = './unwritable';
 
-    protected $throwException;
-    protected $notThrowException;
+    protected $throwException = true;
+    protected $notThrowException = false;
 
     protected function setUp()
     {
-        $this->path = './hello.txt';
-        $this->notFoundPath = './notfound';
-        $this->unreadablePath = './unreadable';
-        $this->dir = './test.dir';
-        $this->notFoundDir = './notfound/dir';
-        $this->unwritableDir = './unwritable.dir';
-        $this->unwritablePath = './unwritable';
-
-
         if (is_file($this->path)) {
             unlink($this->path);
         }
-        if (is_file($this->notFoundPath)) {
-            unlink($this->notFoundPath);
-        }
-        if (is_file($this->unreadablePath)) {
-            unlink($this->unreadablePath);
-        }
-        if (is_file($this->unwritablePath)) {
-            unlink($this->unwritablePath);
-        }
-        if (is_dir($this->dir)) {
-            rmdir($this->dir);
-        }
-        if (is_dir($this->notFoundDir)) {
-            rmdir($this->notFoundDir);
-        }
-        if (is_dir($this->unwritableDir)) {
-            rmdir($this->unwritableDir);
-        }
 
         touch($this->path);
-        mkdir($this->dir);
-        mkdir($this->unwritableDir);
-
-        touch($this->unreadablePath);
-        touch($this->unwritablePath);
-        chmod($this->unreadablePath, 0377);
-        chmod($this->unwritablePath, 0577);
-        chmod($this->unwritableDir, 0577);
-
-        $this->throwException = true;
-        $this->notThrowException = false;
-
-        $this->object = new File($this->path, $this->throwException);
     }
 
     protected function tearDown()
@@ -75,24 +31,37 @@ class FileTest extends \PHPUnit_Framework_TestCase
         if (is_file($this->path)) {
             unlink($this->path);
         }
-        if (is_file($this->notFoundPath)) {
-            unlink($this->notFoundPath);
-        }
         if (is_file($this->unreadablePath)) {
             unlink($this->unreadablePath);
         }
         if (is_file($this->unwritablePath)) {
             unlink($this->unwritablePath);
         }
-        if (is_dir($this->dir)) {
-            rmdir($this->dir);
+    }
+
+    protected function createObject($path, $throwException = true)
+    {
+        return new File($path, $throwException);
+    }
+
+    protected function touchUnreadableFile()
+    {
+        if (is_file($this->unreadablePath)) {
+            unlink($this->unreadablePath);
         }
-        if (is_dir($this->notFoundDir)) {
-            rmdir($this->notFoundDir);
+
+        touch($this->unreadablePath);
+        chmod($this->unreadablePath, 0377);
+    }
+
+    protected function touchUnwritableFile()
+    {
+        if (is_file($this->unwritablePath)) {
+            unlink($this->unwritablePath);
         }
-        if (is_dir($this->unwritableDir)) {
-            rmdir($this->unwritableDir);
-        }
+
+        touch($this->unwritablePath);
+        chmod($this->unwritablePath, 0577);
     }
 
     // isReadable()
@@ -102,6 +71,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function isReadable()
     {
+        $this->object = $this->createObject($this->path);
+
         $actual = $this->object->isReadable();
 
         $this->assertTrue($actual);
@@ -114,6 +85,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function isWritable()
     {
+        $this->object = $this->createObject($this->path);
+
         $actual = $this->object->isWritable();
 
         $this->assertTrue($actual);
@@ -126,6 +99,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function canOpenForRead()
     {
+        $this->object = $this->createObject($this->path);
+
         $actual = $this->object->openForRead();
 
         $this->assertTrue(is_resource($actual));
@@ -136,7 +111,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function canNotOpenForReadIfPathIsNotReadable()
     {
-        $this->object = new File($this->unreadablePath, $this->notThrowException);
+        $this->touchUnreadableFile();
+
+        $this->object = $this->createObject($this->unreadablePath, false);
+
         $actual = $this->object->openForRead();
 
         $this->assertFalse($actual);
@@ -149,6 +127,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function canOpenForWrite()
     {
+        $this->object = $this->createObject($this->path);
+
         $actual = $this->object->openForWrite();
 
         $this->assertTrue(is_resource($actual));
@@ -159,7 +139,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function canNotOpenForWriteIfPathIsNotWritable()
     {
-        $this->object = new File($this->unwritablePath, $this->notThrowException);
+        $this->touchUnwritableFile();
+
+        $this->object = $this->createObject($this->unwritablePath, false);
+
         $actual = $this->object->openForWrite();
 
         $this->assertFalse($actual);
@@ -172,6 +155,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function canOpenForAppend()
     {
+        $this->object = $this->createObject($this->path);
+
         $actual = $this->object->openForAppend();
 
         $this->assertTrue(is_resource($actual));
@@ -182,7 +167,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function canNotOpenForAppendIfPathIsNotWritable()
     {
-        $this->object = new File($this->unwritablePath, $this->notThrowException);
+        $this->touchUnwritableFile();
+
+        $this->object = $this->createObject($this->unwritablePath, false);
+
         $actual = $this->object->openForAppend();
 
         $this->assertFalse($actual);
@@ -195,6 +183,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function getPath()
     {
+        $this->object = $this->createObject($this->path);
+
         $this->assertEquals($this->path, $this->object->getPath());
     }
 
@@ -205,6 +195,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function throwExceptionIsTrue()
     {
+        $this->object = $this->createObject($this->path);
+
         $this->assertTrue($this->object->throwException());
     }
 }

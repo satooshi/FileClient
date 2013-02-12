@@ -12,24 +12,17 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
-    protected $path;
+    protected $path = 'hello.txt';
     protected $content;
 
     protected function setUp()
     {
-        $this->path = 'hello.txt';
-        $this->content = 'hello! world.';
-
         if (is_file($this->path)) {
             unlink($this->path);
         }
 
-        touch($this->path);
+        $this->content = 'hello! world.';
         file_put_contents($this->path, $this->content);
-
-        $file = new File($this->path);
-        $handle = $file->openForWrite();
-        $this->object = new Writer($handle);
     }
 
     protected function tearDown()
@@ -42,6 +35,14 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         unset($this->object);
     }
 
+    protected function createObject()
+    {
+        $file = new File($this->path);
+        $handle = $file->openForWrite();
+
+        return new Writer($handle);
+    }
+
     // write()
 
     /**
@@ -49,6 +50,8 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function write()
     {
+        $this->object = $this->createObject();
+
         $expected = strlen($this->content) + 1; // + new line
         $actual   = $this->object->write($this->content);
 
@@ -60,6 +63,8 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function writeLength()
     {
+        $this->object = $this->createObject();
+
         $expected = 3;
         $actual   = $this->object->write($this->content, $expected);
 

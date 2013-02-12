@@ -12,24 +12,17 @@ class IteratorTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
-    protected $path;
+    protected $path = 'hello.txt';
     protected $content;
 
     protected function setUp()
     {
-        $this->path = 'hello.txt';
-        $this->content = "hello! world";
-
         if (is_file($this->path)) {
             unlink($this->path);
         }
 
-        touch($this->path);
+        $this->content = "hello! world";
         file_put_contents($this->path, $this->content);
-
-        $file = new File($this->path);
-        $handle = $file->openForRead();
-        $this->object = new Iterator($handle);
     }
 
     protected function tearDown()
@@ -40,6 +33,14 @@ class IteratorTest extends \PHPUnit_Framework_TestCase
 
         // destruct
         unset($this->object);
+    }
+
+    protected function createObject()
+    {
+        $file = new File($this->path);
+        $handle = $file->openForRead();
+
+        return new Iterator($handle);
     }
 
     // rewind()
@@ -53,6 +54,8 @@ class IteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function canIterate()
     {
+        $this->object = $this->createObject();
+
         //rewind valid current key next
         foreach ($this->object as $i => $line) {
             $this->assertEquals(0, $i);

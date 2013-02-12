@@ -17,40 +17,17 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
-    protected $path;
+    protected $path = 'hello.json';
     protected $content;
 
     protected function setUp()
     {
-        $this->path = 'hello.json';
-        $this->content = '{"id":1,"name":"hoge"}';
-
         if (is_file($this->path)) {
             unlink($this->path);
         }
 
-        //touch($this->path);
+        $this->content = '{"id":1,"name":"hoge"}';
         file_put_contents($this->path, $this->content);
-
-        // construction
-        $this->object = $this->createReader();
-    }
-
-    protected function createLineReader()
-    {
-        $file = new File($this->path);
-        $handle = $file->openForRead();
-
-        return new LineReader($handle);
-    }
-
-    protected function createReader($type = null)
-    {
-        $lineReader = $this->createLineReader();
-        $serializer = Factory::createSerializer();
-        $format = 'json';
-
-        return new Reader($lineReader, $serializer, $format, $type);
     }
 
     protected function tearDown()
@@ -63,6 +40,23 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         unset($this->object);
     }
 
+    protected function createLineReader()
+    {
+        $file = new File($this->path);
+        $handle = $file->openForRead();
+
+        return new LineReader($handle);
+    }
+
+    protected function createObject($type = null)
+    {
+        $lineReader = $this->createLineReader();
+        $serializer = Factory::createSerializer();
+        $format = 'json';
+
+        return new Reader($lineReader, $serializer, $format, $type);
+    }
+
     // read()
 
     /**
@@ -70,6 +64,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function read()
     {
+        $this->object = $this->createObject();
+
         $expected = array('id' => 1, 'name' => 'hoge');
         $actual   = $this->object->read();
 
@@ -81,7 +77,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function readAsEntity()
     {
-        $this->object = $this->createReader('Contrib\Component\Serializer\SerializableEntity');
+        $this->object = $this->createObject('Contrib\Component\Serializer\SerializableEntity');
 
         $expected = new SerializableEntity(array('id' => 1, 'name' => 'hoge'));
         $actual   = $this->object->read();

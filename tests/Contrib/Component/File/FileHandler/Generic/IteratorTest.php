@@ -14,25 +14,28 @@ class IteratorTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
-    protected $path;
+    protected $path = 'hello.json';
     protected $content;
 
     protected function setUp()
     {
-        $this->path = 'hello.json';
-        $this->content = '{"id":1,"name":"hoge"}';
-
         if (is_file($this->path)) {
             unlink($this->path);
         }
 
-        touch($this->path);
+        $this->content = '{"id":1,"name":"hoge"}';
         file_put_contents($this->path, $this->content);
-
-        $reader = $this->createReader();
-        $this->object = new Iterator($reader);
     }
 
+    protected function tearDown()
+    {
+        if (is_file($this->path)) {
+            unlink($this->path);
+        }
+
+        // destruct
+        unset($this->object);
+    }
 
     protected function createLineReader()
     {
@@ -51,14 +54,11 @@ class IteratorTest extends \PHPUnit_Framework_TestCase
         return new Reader($lineReader, $serializer, $format, $type);
     }
 
-    protected function tearDown()
+    protected function createObject($type = null)
     {
-        if (is_file($this->path)) {
-            unlink($this->path);
-        }
+        $reader = $this->createReader($type);
 
-        // destruct
-        unset($this->object);
+        return new Iterator($reader);
     }
 
     // rewind()
@@ -72,6 +72,8 @@ class IteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function canIterate()
     {
+        $this->object = $this->createObject();
+
         $expected = array(
             'id'   => 1,
             'name' => 'hoge',

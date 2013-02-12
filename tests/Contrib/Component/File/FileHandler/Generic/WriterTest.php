@@ -17,37 +17,16 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
-    protected $path;
+    protected $path = 'hello.json';
     protected $content;
 
     protected function setUp()
     {
-        $this->path = 'hello.json';
-        $this->content = '{"id":1,"name":"hoge"}' . "\n";
-
         if (is_file($this->path)) {
             unlink($this->path);
         }
 
-        // construction
-        $this->object = $this->createWriter();
-    }
-
-    protected function createLineWriter()
-    {
-        $file = new File($this->path);
-        $handle = $file->openForWrite();
-
-        return new LineWriter($handle);
-    }
-
-    protected function createWriter()
-    {
-        $lineWriter = $this->createLineWriter();
-        $serializer = Factory::createSerializer();
-        $format = 'json';
-
-        return new Writer($lineWriter, $serializer, $format);
+        $this->content = '{"id":1,"name":"hoge"}' . "\n";
     }
 
     protected function tearDown()
@@ -60,6 +39,23 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         unset($this->object);
     }
 
+    protected function createLineWriter()
+    {
+        $file = new File($this->path);
+        $handle = $file->openForWrite();
+
+        return new LineWriter($handle);
+    }
+
+    protected function createObject()
+    {
+        $lineWriter = $this->createLineWriter();
+        $serializer = Factory::createSerializer();
+        $format = 'json';
+
+        return new Writer($lineWriter, $serializer, $format);
+    }
+
     // write()
 
     /**
@@ -67,6 +63,8 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function write()
     {
+        $this->object = $this->createObject();
+
         $expected = strlen($this->content);
 
         $data     = array('id' => 1, 'name' => 'hoge');

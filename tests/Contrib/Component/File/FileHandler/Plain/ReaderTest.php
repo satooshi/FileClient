@@ -12,24 +12,17 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
-    protected $path;
+    protected $path = 'hello.txt';
     protected $content;
 
     protected function setUp()
     {
-        $this->path = 'hello.txt';
-        $this->content = 'hello! world.';
-
         if (is_file($this->path)) {
             unlink($this->path);
         }
 
-        touch($this->path);
+        $this->content = 'hello! world.';
         file_put_contents($this->path, $this->content);
-
-        $file = new File($this->path);
-        $handle = $file->openForRead();
-        $this->object = new Reader($handle);
     }
 
     protected function tearDown()
@@ -42,6 +35,14 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         unset($this->object);
     }
 
+    protected function createObject()
+    {
+        $file = new File($this->path);
+        $handle = $file->openForRead();
+
+        return new Reader($handle);
+    }
+
     // read()
 
     /**
@@ -49,6 +50,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function read()
     {
+        $this->object = $this->createObject();
+
         $expected = $this->content;
         $actual   = $this->object->read();
 
@@ -60,6 +63,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function readLength()
     {
+        $this->object = $this->createObject();
+
         $chars    = 3;
         $expected = 'hel';
         $actual   = $this->object->read($chars + 1);
@@ -74,6 +79,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function seek()
     {
+        $this->object = $this->createObject();
+
         $expected = 0;
         $actual   = $this->object->seek(0);
 
