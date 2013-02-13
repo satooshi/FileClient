@@ -1,14 +1,14 @@
 <?php
 namespace Contrib\Component\File\FileHandler\Plain;
 
-use Contrib\Component\File\File;
+use Contrib\Component\File\Factory\WriterFactory;
 
 /**
  * File line writer.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class WriterTest extends \PHPUnit_Framework_TestCase
+class LineWriterTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -35,12 +35,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         unset($this->object);
     }
 
-    protected function createObject()
+    protected function createObject($path, array $options = array())
     {
-        $file = new File($this->path);
-        $handle = $file->openForWrite();
+        $factory = new WriterFactory();
 
-        return new Writer($handle);
+        return $factory->createLineWriter($path, $options);
     }
 
     // write()
@@ -50,7 +49,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function write()
     {
-        $this->object = $this->createObject();
+        $this->object = $this->createObject($this->path);
 
         $expected = strlen($this->content) + 1; // + new line
         $actual   = $this->object->write($this->content);
@@ -63,7 +62,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function writeLength()
     {
-        $this->object = $this->createObject();
+        $this->object = $this->createObject($this->path);
 
         $expected = 3;
         $actual   = $this->object->write($this->content, $expected);

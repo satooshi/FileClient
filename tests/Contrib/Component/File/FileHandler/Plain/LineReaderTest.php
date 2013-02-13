@@ -1,14 +1,14 @@
 <?php
 namespace Contrib\Component\File\FileHandler\Plain;
 
-use Contrib\Component\File\File;
+use Contrib\Component\File\Factory\ReaderFactory;
 
 /**
  * File line reader.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class ReaderTest extends \PHPUnit_Framework_TestCase
+class LineReaderTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -35,12 +35,11 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         unset($this->object);
     }
 
-    protected function createObject()
+    protected function createObject($path, array $options = array())
     {
-        $file = new File($this->path);
-        $handle = $file->openForRead();
+        $factory = new ReaderFactory();
 
-        return new Reader($handle);
+        return $factory->createLineReader($path, $options);
     }
 
     // read()
@@ -50,7 +49,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function read()
     {
-        $this->object = $this->createObject();
+        $this->object = $this->createObject($this->path);
 
         $expected = $this->content;
         $actual   = $this->object->read();
@@ -63,7 +62,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function readLength()
     {
-        $this->object = $this->createObject();
+        $this->object = $this->createObject($this->path);
 
         $chars    = 3;
         $expected = 'hel';
@@ -79,7 +78,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function seek()
     {
-        $this->object = $this->createObject();
+        $this->object = $this->createObject($this->path);
 
         $expected = 0;
         $actual   = $this->object->seek(0);

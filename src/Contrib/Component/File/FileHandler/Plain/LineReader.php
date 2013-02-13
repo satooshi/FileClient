@@ -2,9 +2,15 @@
 namespace Contrib\Component\File\FileHandler\Plain;
 
 use Contrib\Component\File\FileHandler\AbstractFileHandler;
+use Contrib\Component\File\File;
 
 /**
  * File line reader.
+ *
+ * * autoDetectLineEnding: boolean Default is true
+ * * convert: boolean Default is false
+ * * toEncoding: string Default is 'UTF-8'
+ * * fromEncoding: string Default is 'auto'
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
@@ -16,8 +22,9 @@ class LineReader extends AbstractFileHandler implements LineReaderInterface
      * @param string $path    File path.
      * @param array  $options Options.
      */
-    public function __construct(array $options = array())
+    public function __construct(File $file, array $options = array())
     {
+        $this->file    = $file;
         $this->options = $options + static::getDefaultOptions();
 
         ini_set('auto_detect_line_endings', $this->options['autoDetectLineEnding']);
@@ -59,5 +66,20 @@ class LineReader extends AbstractFileHandler implements LineReaderInterface
     public function openForRead()
     {
         $this->handle = $this->file->openForRead();
+    }
+
+    /**
+     * Return defualt encoding options.
+     *
+     * @return array Default encoding options.
+     */
+    public static function getDefaultOptions()
+    {
+        return array(
+            'autoDetectLineEnding' => true,
+            'convert'              => false,
+            'toEncoding'           => 'UTF-8',
+            'fromEncoding'         => 'auto',
+        );
     }
 }

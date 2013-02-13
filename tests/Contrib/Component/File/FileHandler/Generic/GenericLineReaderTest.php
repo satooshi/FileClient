@@ -3,17 +3,15 @@ namespace Contrib\Component\File\FileHandler\Generic;
 
 require_once 'SerializableEntity.php';
 
-use Contrib\Component\File\File;
-use Contrib\Component\File\FileHandler\Plain\Reader as LineReader;
-use Contrib\Component\Serializer\Factory;
 use Contrib\Component\Serializer\SerializableEntity;
+use Contrib\Component\File\Factory\ReaderFactory;
 
 /**
  * Generic line reader.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class ReaderTest extends \PHPUnit_Framework_TestCase
+class GenericLineReaderTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -40,21 +38,11 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         unset($this->object);
     }
 
-    protected function createLineReader()
+    protected function createObject($path, $format, $type = null, array $options = array())
     {
-        $file = new File($this->path);
-        $handle = $file->openForRead();
+        $factory = new ReaderFactory();
 
-        return new LineReader($handle);
-    }
-
-    protected function createObject($type = null)
-    {
-        $lineReader = $this->createLineReader();
-        $serializer = Factory::createSerializer();
-        $format = 'json';
-
-        return new Reader($lineReader, $serializer, $format, $type);
+        return $factory->createGenericLineReader($path, $format, $type, $options);
     }
 
     // read()
@@ -64,7 +52,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function read()
     {
-        $this->object = $this->createObject();
+        $this->object = $this->createObject($this->path, 'json');
 
         $expected = array('id' => 1, 'name' => 'hoge');
         $actual   = $this->object->read();
@@ -77,7 +65,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function readAsEntity()
     {
-        $this->object = $this->createObject('Contrib\Component\Serializer\SerializableEntity');
+        $this->object = $this->createObject($this->path, 'json', 'Contrib\Component\Serializer\SerializableEntity');
 
         $expected = new SerializableEntity(array('id' => 1, 'name' => 'hoge'));
         $actual   = $this->object->read();

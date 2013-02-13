@@ -1,14 +1,14 @@
 <?php
 namespace Contrib\Component\File\FileHandler\Plain;
 
-use Contrib\Component\File\File;
+use Contrib\Component\File\Factory\ReaderIteratorFactory;
 
 /**
- * Iterator for file read.
+ * LineIterator for file read.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class IteratorTest extends \PHPUnit_Framework_TestCase
+class LineIteratorTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -35,12 +35,11 @@ class IteratorTest extends \PHPUnit_Framework_TestCase
         unset($this->object);
     }
 
-    protected function createObject()
+    protected function createObject($path, array $options = array())
     {
-        $file = new File($this->path);
-        $handle = $file->openForRead();
+        $factory = new ReaderIteratorFactory();
 
-        return new Iterator($handle);
+        return $factory->createLineIterator($path, $options);
     }
 
     // rewind()
@@ -54,7 +53,7 @@ class IteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function canIterate()
     {
-        $this->object = $this->createObject();
+        $this->object = $this->createObject($this->path);
 
         //rewind valid current key next
         foreach ($this->object as $i => $line) {

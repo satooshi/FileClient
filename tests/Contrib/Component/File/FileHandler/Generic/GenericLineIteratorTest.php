@@ -4,6 +4,7 @@ namespace Contrib\Component\File\FileHandler\Generic;
 use Contrib\Component\File\File;
 use Contrib\Component\File\FileHandler\Plain\Reader as LineReader;
 use Contrib\Component\Serializer\Factory;
+use Contrib\Component\File\Factory\ReaderIteratorFactory;
 
 /**
  * Generic line iterator.
@@ -37,28 +38,11 @@ class IteratorTest extends \PHPUnit_Framework_TestCase
         unset($this->object);
     }
 
-    protected function createLineReader()
+    protected function createObject($path, $format, $type = null, array $options = array())
     {
-        $file = new File($this->path);
-        $handle = $file->openForRead();
+        $factory = new ReaderIteratorFactory();
 
-        return new LineReader($handle);
-    }
-
-    protected function createReader($type = null)
-    {
-        $lineReader = $this->createLineReader();
-        $serializer = Factory::createSerializer();
-        $format = 'json';
-
-        return new Reader($lineReader, $serializer, $format, $type);
-    }
-
-    protected function createObject($type = null)
-    {
-        $reader = $this->createReader($type);
-
-        return new Iterator($reader);
+        return $factory->createGenericLineIterator($path, $format, $type, $options);
     }
 
     // rewind()
@@ -72,7 +56,7 @@ class IteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function canIterate()
     {
-        $this->object = $this->createObject();
+        $this->object = $this->createObject($this->path, 'json');
 
         $expected = array(
             'id'   => 1,

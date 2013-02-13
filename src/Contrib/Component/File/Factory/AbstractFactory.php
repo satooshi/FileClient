@@ -4,6 +4,7 @@ namespace Contrib\Component\File\Factory;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Contrib\Component\File\File;
 
 abstract class AbstractFactory
@@ -27,7 +28,7 @@ abstract class AbstractFactory
         );
 
         $normalizers = array(
-            new Normalizer()
+            new GetSetMethodNormalizer()
         );
 
         return new Serializer($normalizers, $encoders);

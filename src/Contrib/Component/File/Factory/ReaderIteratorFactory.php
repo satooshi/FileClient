@@ -6,7 +6,7 @@ use Contrib\Component\File\Client\AbstractFileIterator;
 use Contrib\Component\File\Client\Plain\FileReaderIterator;
 use Contrib\Component\File\Client\Plain\FileReaderLimitIterator;
 
-class IteratorFactory
+class ReaderIteratorFactory extends ReaderFactory
 {
     // line iterator
 

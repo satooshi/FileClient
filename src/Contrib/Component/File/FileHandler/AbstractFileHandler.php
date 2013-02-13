@@ -18,7 +18,7 @@ abstract class AbstractFileHandler
     protected $file;
 
     /**
-     * Encoding options.
+     * Options.
      *
      * * convert: boolean Default is false
      * * toEncoding: string Default is 'UTF-8'
@@ -39,7 +39,7 @@ abstract class AbstractFileHandler
      * Constructor.
      *
      * @param File  $file    File.
-     * @param array $options Encoding options.
+     * @param array $options Options.
      */
     public function __construct(File $file, array $options = array())
     {
@@ -100,9 +100,9 @@ abstract class AbstractFileHandler
     }
 
     /**
-     * Return encoding options.
+     * Return options.
      *
-     * @return array Encoding options.
+     * @return array Options.
      */
     public function getOptions()
     {
@@ -110,9 +110,9 @@ abstract class AbstractFileHandler
     }
 
     /**
-     * Return defualt encoding options.
+     * Return defualt options.
      *
-     * @return array Default encoding options.
+     * @return array Default options.
      */
     public static function getDefaultOptions()
     {

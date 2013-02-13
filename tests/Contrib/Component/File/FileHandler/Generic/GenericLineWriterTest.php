@@ -1,19 +1,14 @@
 <?php
 namespace Contrib\Component\File\FileHandler\Generic;
 
-require_once 'SerializableEntity.php';
-
-use Contrib\Component\File\File;
-use Contrib\Component\File\FileHandler\Plain\Writer as LineWriter;
-use Contrib\Component\Serializer\Factory;
-use Contrib\Component\Serializer\SerializableEntity;
+use Contrib\Component\File\Factory\WriterFactory;
 
 /**
  * Generic line writer.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class WriterTest extends \PHPUnit_Framework_TestCase
+class GenericLineWriterTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -39,21 +34,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         unset($this->object);
     }
 
-    protected function createLineWriter()
+    protected function createObject($path, $format, array $options = array())
     {
-        $file = new File($this->path);
-        $handle = $file->openForWrite();
+        $factory = new WriterFactory();
 
-        return new LineWriter($handle);
-    }
-
-    protected function createObject()
-    {
-        $lineWriter = $this->createLineWriter();
-        $serializer = Factory::createSerializer();
-        $format = 'json';
-
-        return new Writer($lineWriter, $serializer, $format);
+        return $factory->createGenericLineWriter($path, $format, $options);
     }
 
     // write()
@@ -63,7 +48,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function write()
     {
-        $this->object = $this->createObject();
+        $this->object = $this->createObject($this->path, 'json');
 
         $expected = strlen($this->content);
 
