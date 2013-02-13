@@ -3,7 +3,7 @@ namespace Contrib\Component\File\Client\Generic;
 
 require_once 'SerializableEntity.php';
 
-use Contrib\Component\File\Factory\WriterFactory;
+use Contrib\Component\File\Factory\AppenderFactory;
 
 /**
  * Generic file appender.
@@ -45,7 +45,7 @@ class GenericFileLineAppenderTest extends \PHPUnit_Framework_TestCase
     protected function createObject($path, $format, $throwException = true)
     {
         $options = array('throwException' => $throwException);
-        $factory = new WriterFactory();
+        $factory = new AppenderFactory();
 
         return $factory->createGenericFileLineAppender($path, $format, $options);
     }

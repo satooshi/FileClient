@@ -1,7 +1,7 @@
 <?php
 namespace Contrib\Component\File\Client\Plain;
 
-use Contrib\Component\File\Factory\WriterFactory;
+use Contrib\Component\File\Factory\AppenderFactory;
 
 /**
  * File appender.
@@ -41,7 +41,7 @@ class FileAppenderTest extends \PHPUnit_Framework_TestCase
     protected function createObject($path, $throwException = true)
     {
         $options = array('throwException' => $throwException);
-        $factory = new WriterFactory();
+        $factory = new AppenderFactory();
 
         return $factory->createFileAppender($path, $options);
     }

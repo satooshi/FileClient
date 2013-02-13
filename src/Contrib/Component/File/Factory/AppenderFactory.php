@@ -4,28 +4,28 @@ namespace Contrib\Component\File\Factory;
 use Contrib\Component\File\FileHandler\Plain\LineWriter;
 use Contrib\Component\File\FileHandler\Generic\GenericLineWriter;
 use Contrib\Component\File\Client\Plain\FileLineWriter;
-use Contrib\Component\File\Client\Plain\FileWriter;
+use Contrib\Component\File\Client\Plain\FileAppender;
 use Contrib\Component\File\Client\Generic\GenericFileWriter;
 use Contrib\Component\File\Client\Generic\GenericFileLineWriter;
 
-class WriterFactory extends AbstractFactory
+class AppenderFactory extends AbstractFactory
 {
     // line handler
 
-    public function createLineWriter($path, array $options = array())
+    public function createLineAppender($path, array $options = array())
     {
         $file = $this->createFile($path, $options);
         $lineHandler = new LineWriter($file, $options);
-        $lineHandler->openForWrite();
+        $lineHandler->openForAppend();
 
         return $lineHandler;
     }
 
     // generic line handler
 
-    public function createGenericLineWriter($path, $format, array $options = array())
+    public function createGenericLineAppender($path, $format, array $options = array())
     {
-        $lineHandler = $this->createLineWriter($path, $options);
+        $lineHandler = $this->createLineAppender($path, $options);
         $serializer = $this->createSerializer();
 
         return new GenericLineWriter($lineHandler, $serializer, $format);
@@ -33,36 +33,36 @@ class WriterFactory extends AbstractFactory
 
     // file line client
 
-    public function createFileLineWriter($path, array $options = array())
+    public function createFileLineAppender($path, array $options = array())
     {
-        $lineHandler = $this->createLineWriter($path, $options);
+        $lineHandler = $this->createLineAppender($path, $options);
 
         return new FileLineWriter($lineHandler, $options);
     }
 
     // file client
 
-    public function createFileWriter($path, array $options = array())
+    public function createFileAppender($path, array $options = array())
     {
         $file = $this->createFile($path, $options);
 
-        return new FileWriter($file, $options);
+        return new FileAppender($file, $options);
     }
 
     // generic file line client
 
-    public function createGenericFileLineWriter($path, $format, array $options = array())
+    public function createGenericFileLineAppender($path, $format, array $options = array())
     {
-        $lineHandler = $this->createGenericLineWriter($path, $format, $options);
+        $lineHandler = $this->createGenericLineAppender($path, $format, $options);
 
         return new GenericFileLineWriter($lineHandler, $options);
     }
 
     // generic file client
 
-    public function createGenericFileWriter($path, array $options = array())
+    public function createGenericFileAppender($path, array $options = array())
     {
-        $fileClient = $this->createFileWriter($path, $options);
+        $fileClient = $this->createFileAppender($path, $options);
         $serializer = $this->createSerializer();
 
         return new GenericFileWriter($fileClient, $serializer, $options);
