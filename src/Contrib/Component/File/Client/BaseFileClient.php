@@ -18,9 +18,8 @@ abstract class BaseFileClient extends AbstractFileClient
      */
     public function __construct(File $file, array $options = array())
     {
-        parent::__construct($options);
-
-        $this->file = $file;
+        $this->file    = $file;
+        $this->options = $options + static::getDefaultOptions();
     }
 
     /**

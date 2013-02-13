@@ -26,9 +26,9 @@ class GenericFileReader extends AbstractGenericFileClient
      */
     public function __construct(FileReaderInterface $fileClient, Serializer $serializer, array $options = array())
     {
-        parent::__construct($serializer, $options);
-
         $this->fileClient = $fileClient;
+        $this->serializer = $serializer;
+        $this->options    = $options + static::getDefaultOptions();
     }
 
     // API

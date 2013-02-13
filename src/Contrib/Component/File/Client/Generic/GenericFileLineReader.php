@@ -21,9 +21,8 @@ class GenericFileLineReader extends AbstractFileClient
      */
     public function __construct(LineReaderInterface $lineHandler, array $options = array())
     {
-        parent::__construct($options);
-
         $this->lineHandler = $lineHandler;
+        $this->options     = $options + static::getDefaultOptions();
     }
 
     // API

@@ -25,6 +25,7 @@ class FileReader extends BaseFileClient implements FileReaderInterface
 
         if ($this->file->isReadable()) {
             if ($explode) {
+                ini_set('auto_detect_line_endings', $this->options['autoDetectLineEnding']);
                 $content = file($this->file->getPath(), FILE_IGNORE_NEW_LINES);
             } else {
                 $content = file_get_contents($this->file->getPath());

@@ -23,8 +23,7 @@ abstract class AbstractGenericFileClient extends AbstractFileClient
      */
     public function __construct(Serializer $serializer, array $options = array())
     {
-        parent::__construct($options);
-
         $this->serializer = $serializer;
+        $this->options    = $options + static::getDefaultOptions();
     }
 }

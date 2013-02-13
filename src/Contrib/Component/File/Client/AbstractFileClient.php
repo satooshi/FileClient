@@ -30,8 +30,6 @@ abstract class AbstractFileClient
     public function __construct(array $options = array())
     {
         $this->options = $options + static::getDefaultOptions();
-
-        ini_set('auto_detect_line_endings', $this->options['autoDetectLineEnding']);
     }
 
     // internal method

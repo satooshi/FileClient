@@ -25,9 +25,8 @@ abstract class AbstractFileIterator extends AbstractFileClient
      */
     public function __construct(\Iterator $iterator, array $options = array())
     {
-        parent::__construct($options);
-
         $this->lineHandler = $iterator;
+        $this->options     = $options + static::getDefaultOptions();
     }
 
     // interanal method

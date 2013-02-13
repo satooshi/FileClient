@@ -10,6 +10,19 @@ use Contrib\Component\File\FileHandler\AbstractFileHandler;
  */
 class LineReader extends AbstractFileHandler implements LineReaderInterface
 {
+    /**
+     * Constructor.
+     *
+     * @param string $path    File path.
+     * @param array  $options Options.
+     */
+    public function __construct(array $options = array())
+    {
+        $this->options = $options + static::getDefaultOptions();
+
+        ini_set('auto_detect_line_endings', $this->options['autoDetectLineEnding']);
+    }
+
     // API
 
     /**

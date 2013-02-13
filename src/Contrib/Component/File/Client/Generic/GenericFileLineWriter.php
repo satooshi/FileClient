@@ -21,9 +21,8 @@ class GenericFileLineWriter extends AbstractFileClient
      */
     public function __construct(LineWriterInterface $lineHandler, array $options = array())
     {
-        parent::__construct($options);
-
         $this->lineHandler = $lineHandler;
+        $this->options     = $options + static::getDefaultOptions();
     }
 
     // API

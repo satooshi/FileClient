@@ -70,4 +70,14 @@ class LineWriter extends AbstractFileHandler implements LineWriterInterface
     {
         return $str . $this->options['newLine'];
     }
+
+    public static function getDefaultOptions()
+    {
+        return array(
+            'newLine'      => "\n",
+            'convert'      => false,
+            'toEncoding'   => 'UTF-8',
+            'fromEncoding' => 'auto',
+        );
+    }
 }
