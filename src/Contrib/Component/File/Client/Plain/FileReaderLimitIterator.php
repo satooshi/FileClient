@@ -28,7 +28,11 @@ class FileReaderLimitIterator extends AbstractFileIterator
      */
     public function walk($callback)
     {
-        $this->iterateLimit($callback, $this->options['limit']);
+        if (!$this->isReadable()) {
+            return false;
+        }
+
+        $this->iterate($callback, $this->options['limit']);
         $this->initSuspended();
 
         return $this->lineHandler;
@@ -44,7 +48,7 @@ class FileReaderLimitIterator extends AbstractFileIterator
      * @param integer   $limit
      * @return void
      */
-    protected function iterateLimit($callback, $limit)
+    protected function iterate($callback, $limit)
     {
         $readLine = 0;
 

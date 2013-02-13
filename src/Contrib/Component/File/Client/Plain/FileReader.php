@@ -17,32 +17,56 @@ class FileReader extends BaseFileClient implements FileReaderInterface
      *
      * @see \Contrib\Component\File\Client\Plain\FileReaderInterface::read()
      */
-    public function read($explode = false)
+    public function read()
     {
-        if (!isset($this->file)) {
-            throw new \RuntimeException('File is not set.');
+        if (!$this->file->isReadable()) {
+            return false;
         }
 
-        if ($this->file->isReadable()) {
-            if ($explode) {
-                ini_set('auto_detect_line_endings', $this->options['autoDetectLineEnding']);
-                $content = file($this->file->getPath(), FILE_IGNORE_NEW_LINES);
-            } else {
-                $content = file_get_contents($this->file->getPath());
-            }
+        $content = file_get_contents($this->file->getPath());
 
-            // convert encoding
-            if ($this->options['convertEncoding']) {
-                return mb_convert_encoding(
-                    $content,
-                    $this->options['toEncoding'],
-                    $this->options['fromEncoding']
-                );
-            }
+        // convert encoding
+        if (is_string($content) && $this->options['convertEncoding']) {
+            return mb_convert_encoding(
+                $content,
+                $this->options['toEncoding'],
+                $this->options['fromEncoding']
+            );
+        }
 
+        return $content;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Contrib\Component\File\Client\Plain\FileReaderInterface::readLines()
+     */
+    public function readLines()
+    {
+        if (!$this->file->isReadable()) {
+            return false;
+        }
+
+        ini_set('auto_detect_line_endings', $this->options['autoDetectLineEnding']);
+
+        $content = file($this->file->getPath(), FILE_IGNORE_NEW_LINES);
+
+        if (!$this->options['convertEncoding']) {
             return $content;
         }
 
-        return false;
+        // convert encoding
+        $converted = array();
+
+        foreach ($content as $line) {
+            $converted[] = mb_convert_encoding(
+                $line,
+                $this->options['toEncoding'],
+                $this->options['fromEncoding']
+            );
+        }
+
+        return $converted;
     }
 }

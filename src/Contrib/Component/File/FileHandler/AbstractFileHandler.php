@@ -76,12 +76,13 @@ abstract class AbstractFileHandler
      *
      * @param integer $offset
      * @param string  $whence
-     * @return integer 0 on success, -1 on failure
+     * @return boolean true on success, false on failure
+     * @throws \RuntimeException If file handle is not set.
      */
     public function seek($offset, $whence = SEEK_SET)
     {
         if (isset($this->handle) && is_resource($this->handle)) {
-            return fseek($this->handle, $offset, $whence);
+            return fseek($this->handle, $offset, $whence) === 0;
         }
 
         throw new \RuntimeException('File handle is not set.');

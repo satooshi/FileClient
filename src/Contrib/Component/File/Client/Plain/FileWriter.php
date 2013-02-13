@@ -19,8 +19,8 @@ class FileWriter extends BaseFileClient implements FileWriterInterface
      */
     public function write($lines)
     {
-        if (!isset($this->file)) {
-            throw new \RuntimeException('File is not set.');
+        if (!$this->file->isWritable()) {
+            return false;
         }
 
         // convert encoding
@@ -32,10 +32,6 @@ class FileWriter extends BaseFileClient implements FileWriterInterface
             );
         }
 
-        if ($this->file->isWritable()) {
-            return file_put_contents($this->file->getPath(), $lines);
-        }
-
-        return false;
+        return file_put_contents($this->file->getPath(), $lines);
     }
 }

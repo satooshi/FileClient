@@ -62,4 +62,14 @@ class GenericLineWriter implements LineWriterInterface
     {
         return $this->lineHandler->seek($offset, $whence);
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Contrib\Component\File\FileHandler\Plain\LineWriterInterface::getFile()
+     */
+    public function getFile()
+    {
+        return $this->lineHandler->getFile();
+    }
 }

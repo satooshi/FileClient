@@ -97,4 +97,16 @@ class LineIterator implements \Iterator
             $this->numLine++;
         }
     }
+
+    // accessor
+
+    /**
+     * Return LineReader.
+     *
+     * @return \Contrib\Component\File\FileHandler\Plain\LineReaderInterface
+     */
+    public function getLineReader()
+    {
+        return $this->lineHandler;
+    }
 }

@@ -1,6 +1,8 @@
 <?php
 namespace Contrib\Component\File\Client;
 
+use Contrib\Component\File\FileHandler\Plain\LineReaderInterface;
+
 abstract class AbstractFileIterator extends AbstractFileClient
 {
     /**
@@ -70,6 +72,47 @@ abstract class AbstractFileIterator extends AbstractFileClient
     public function isSuspended()
     {
         return $this->isSuspended;
+    }
+
+    /**
+     * Return inner LineReader.
+     *
+     * @return \Contrib\Component\File\FileHandler\Plain\LineReaderInterface|NULL
+     */
+    public function getInnerLineReader()
+    {
+        if ($this->lineHandler instanceof \IteratorIterator) {
+            $lineHandler = $this->lineHandler->getInnerIterator();
+        } else {
+            $lineHandler = $this->lineHandler;
+        }
+
+        if (is_object($lineHandler) && method_exists($lineHandler, 'getLineReader')) {
+            $lineReader = $lineHandler->getLineReader();
+
+            if ($lineReader instanceof LineReaderInterface) {
+                return $lineReader;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Return whether the file is readable.
+     *
+     * @return boolean true if the file is readable.
+     * @throws \RuntimeException Throw if the file is not readable and $throwException is set to true.
+     */
+    public function isReadable()
+    {
+        $lineReader = $this->getInnerLineReader();
+
+        if ($lineReader === null) {
+            return false;
+        }
+
+        return $lineReader->getFile()->isReadable();
     }
 
     /**

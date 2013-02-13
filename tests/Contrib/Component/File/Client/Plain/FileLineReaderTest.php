@@ -8,7 +8,7 @@ use Contrib\Component\File\Factory\ReaderFactory;
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class FileReaderTest extends \PHPUnit_Framework_TestCase
+class FileLineReaderTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -41,9 +41,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
         $options = array('throwException' => $throwException);
         $factory = new ReaderFactory();
 
-        return $factory->createFileReader($path, $options);
-
-        return new FileReader($path, array('throwException' => $throwException));
+        return $factory->createFileLineReader($path, $options);
     }
 
     protected function touchUnreadableFile()
@@ -56,54 +54,16 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
         chmod($this->unreadablePath, 0377);
     }
 
-    // read()
+    // readLines()
 
     /**
      * @test
      */
-    public function read()
+    public function readLines()
     {
         $this->object = $this->createObject($this->path);
 
-        $expected = $this->content;
-        $actual = $this->object->read(false);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @test
-     */
-    public function canNotReadIfPathIsNotReadable()
-    {
-        $this->touchUnreadableFile();
-
-        $this->object = $this->createObject($this->unreadablePath, false);
-
-        $this->assertFalse($this->object->read(false));
-    }
-
-    /**
-     * @test
-     * @expectedException RuntimeException
-     */
-    public function throwRuntimeExceptionOnReadIfPathIsNotReadable()
-    {
-        $this->touchUnreadableFile();
-
-        $this->object = $this->createObject($this->unreadablePath);
-
-        $this->object->read(false);
-    }
-
-    /**
-     * @test
-     */
-    public function readExploded()
-    {
-        $this->object = $this->createObject($this->path);
-
-        $expected = array("hello", "world!");
+        $expected = array("hello\n", "world!");
         $actual = $this->object->readLines();
 
         $this->assertEquals($expected, $actual);
@@ -112,7 +72,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function canNotReadExplodedIfPathIsNotReadable()
+    public function canNotReadLinesIfPathIsNotReadable()
     {
         $this->touchUnreadableFile();
 
@@ -125,25 +85,13 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
      * @test
      * @expectedException RuntimeException
      */
-    public function throwRuntimeExceptionReadExplodedIfPathIsNotReadable()
+    public function throwRuntimeExceptionOnReadLinesIfPathIsNotReadable()
     {
         $this->touchUnreadableFile();
 
         $this->object = $this->createObject($this->unreadablePath);
 
         $this->object->readLines();
-    }
-
-    // getFile()
-
-    /**
-     * @test
-     */
-    public function getFile()
-    {
-        $this->object = $this->createObject($this->path);
-
-        $this->assertNotNull($this->object->getFile());
     }
 
     // getOptions()

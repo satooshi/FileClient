@@ -16,7 +16,15 @@ interface LineReaderInterface
      *
      * @param integer $offset
      * @param string  $whence
-     * @return integer 0 on success, -1 on failure
+     * @return boolean true on success, false on failure.
+     * @throws \RuntimeException If file handle is not set.
      */
     public function seek($offset, $whence = SEEK_SET);
+
+    /**
+     * Return file.
+     *
+     * @return \Contrib\Component\File\File
+     */
+    public function getFile();
 }

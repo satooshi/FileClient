@@ -6,9 +6,16 @@ interface FileReaderInterface
     /**
      * Return file content.
      *
-     * @param boolean $explode Whether to explode by new line.
-     * @return string File contents
+     * @return string File contents.
      * @throws \RuntimeException Throw on failure if $throwException is set to true.
      */
-    public function read($explode = false);
+    public function read();
+
+    /**
+     * Return file content exploded by new line.
+     *
+     * @return array File contents.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     */
+    public function readLines();
 }

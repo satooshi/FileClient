@@ -8,7 +8,7 @@ use Contrib\Component\File\Factory\ReaderIteratorFactory;
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
+class FileReaderLimitIteratorTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -36,7 +36,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    protected function createObject($path, $throwException = true, $skipEmptyCount = true, $limit = 0, $offset = 0)
+    protected function createObject($path, $throwException = true, $skipEmptyCount = false, $limit = 0, $offset = 0)
     {
         $options = array(
             'throwException' => $throwException,
@@ -79,7 +79,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function walkLimit1()
     {
-        $this->object = $this->createObject($this->path, true, true, 1);
+        $this->object = $this->createObject($this->path, true, false, 1);
 
         $actual = $this->object->walk(function(){});
 
@@ -92,7 +92,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function walkLimit3()
     {
-        $this->object = $this->createObject($this->path, true, true, 3);
+        $this->object = $this->createObject($this->path, true, false, 3);
 
         $actual = $this->object->walk(function(){});
 
@@ -144,7 +144,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function stopWalkLimitIfCallbackReturnFalse()
     {
-        $this->object = $this->createObject($this->path, true, true, 10);
+        $this->object = $this->createObject($this->path, true, false, 10);
 
         $actual = $this->object->walk(function(){
             return false;
@@ -192,7 +192,7 @@ class FileReaderIteratorTest extends \PHPUnit_Framework_TestCase
             'newLine'              => PHP_EOL,
             'throwException'       => true,
             'autoDetectLineEnding' => true,
-            'skipEmptyCount'       => true,
+            'skipEmptyCount'       => false,
             'limit'                => 0,
             'offset'               => 0,
             'convertEncoding'      => true,

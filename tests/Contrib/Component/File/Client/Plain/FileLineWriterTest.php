@@ -8,7 +8,7 @@ use Contrib\Component\File\Factory\WriterFactory;
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class FileWriterTest extends \PHPUnit_Framework_TestCase
+class FileLineWriterTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -43,7 +43,7 @@ class FileWriterTest extends \PHPUnit_Framework_TestCase
         $options = array('throwException' => $throwException);
         $factory = new WriterFactory();
 
-        return $factory->createFileWriter($path, $options);
+        return $factory->createFileLineWriter($path, $options);
     }
 
     protected function touchUnwritableFile()
@@ -56,17 +56,18 @@ class FileWriterTest extends \PHPUnit_Framework_TestCase
         chmod($this->unwritablePath, 0577);
     }
 
-    // write()
+    // writeLines()
 
     /**
      * @test
      */
-    public function write()
+    public function writeLines()
     {
         $this->object = $this->createObject($this->path);
 
-        $expected = strlen($this->content);
-        $actual = $this->object->write($this->content);
+        $expected = strlen($this->content) + 1;
+        $lines = explode("\n", $this->content);
+        $actual = $this->object->writeLines($lines);
 
         $this->assertEquals($expected, $actual);
     }
@@ -74,25 +75,27 @@ class FileWriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function canNotWriteIfPathIsNotWritable()
+    public function canNotWriteLinesIfPathIsNotWritable()
     {
         $this->touchUnwritableFile();
 
         $this->object = $this->createObject($this->unwritablePath, false);
 
-        $this->assertFalse($this->object->write($this->content));
+        $lines = explode("\n", $this->content);
+        $this->assertFalse($this->object->writeLines($lines));
     }
 
     /**
      * @test
      * @expectedException RuntimeException
      */
-    public function throwRuntimeExceptionOnWriteIfPathIsNotWritable()
+    public function throwRuntimeExceptionOnWriteLinesIfPathIsNotWritable()
     {
         $this->touchUnwritableFile();
 
         $this->object = $this->createObject($this->unwritablePath);
 
-        $this->object->write($this->content);
+        $lines = explode("\n", $this->content);
+        $this->object->writeLines($lines);
     }
 }

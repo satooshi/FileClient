@@ -46,7 +46,7 @@ class LineReader extends AbstractFileHandler implements LineReaderInterface
         }
 
         // convert encoding
-        if ($this->options['convert']) {
+        if (is_string($line) && $this->options['convert']) {
             return mb_convert_encoding(
                 $line,
                 $this->options['toEncoding'],

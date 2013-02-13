@@ -36,6 +36,10 @@ class GenericFileLineReader extends AbstractFileClient
      */
     public function readLinesAs($length = null)
     {
+        if (!$this->lineHandler->getFile()->isReadable()) {
+            return false;
+        }
+
         $lines = array();
 
         while (false !== $line = $this->lineHandler->read($length)) {
@@ -50,10 +54,11 @@ class GenericFileLineReader extends AbstractFileClient
      *
      * @param integer $offset
      * @param string  $whence
-     * @return integer 0 on success, -1 on failure
+     * @return boolean true on success, false on failure.
+     * @throws \RuntimeException If file handle is not set.
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        $this->lineHandler->seek($offset, $whence);
+        return $this->lineHandler->seek($offset, $whence);
     }
 }

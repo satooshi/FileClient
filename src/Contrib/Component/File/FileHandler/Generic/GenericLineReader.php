@@ -88,4 +88,14 @@ class GenericLineReader implements LineReaderInterface
     {
         return $this->lineHandler->seek($offset, $whence);
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Contrib\Component\File\FileHandler\Plain\LineReaderInterface::getFile()
+     */
+    public function getFile()
+    {
+        return $this->lineHandler->getFile();
+    }
 }

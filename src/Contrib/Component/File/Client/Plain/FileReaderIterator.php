@@ -28,6 +28,10 @@ class FileReaderIterator extends AbstractFileIterator
      */
     public function walk($callback)
     {
+        if (!$this->isReadable()) {
+            return false;
+        }
+
         $this->iterate($callback);
         $this->initSuspended();
 

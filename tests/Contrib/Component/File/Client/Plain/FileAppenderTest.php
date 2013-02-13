@@ -1,6 +1,8 @@
 <?php
 namespace Contrib\Component\File\Client\Plain;
 
+use Contrib\Component\File\Factory\WriterFactory;
+
 /**
  * File appender.
  *
@@ -38,7 +40,10 @@ class FileAppenderTest extends \PHPUnit_Framework_TestCase
 
     protected function createObject($path, $throwException = true)
     {
-        return new FileAppender($path, array('throwException' => $throwException));
+        $options = array('throwException' => $throwException);
+        $factory = new WriterFactory();
+
+        return $factory->createFileAppender($path, $options);
     }
 
     protected function touchUnwritableFile()
@@ -89,48 +94,5 @@ class FileAppenderTest extends \PHPUnit_Framework_TestCase
         $this->object = $this->createObject($this->unwritablePath);
 
         $this->object->write($this->content);
-    }
-
-    // writeLines()
-
-    /**
-     * @test
-     */
-    public function writeLines()
-    {
-        $this->object = $this->createObject($this->path);
-
-        $expected = strlen($this->content) + 1;
-        $lines = explode("\n", $this->content);
-        $actual = $this->object->writeLines($lines);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @test
-     */
-    public function canNotWriteLinesIfPathIsNotWritable()
-    {
-        $this->touchUnwritableFile();
-
-        $this->object = $this->createObject($this->unwritablePath, false);
-
-        $lines = explode("\n", $this->content);
-        $this->assertFalse($this->object->writeLines($lines));
-    }
-
-    /**
-     * @test
-     * @expectedException RuntimeException
-     */
-    public function throwRuntimeExceptionOnWriteLinesIfPathIsNotWritable()
-    {
-        $this->touchUnwritableFile();
-
-        $this->object = $this->createObject($this->unwritablePath);
-
-        $lines = explode("\n", $this->content);
-        $this->object->writeLines($lines);
     }
 }
