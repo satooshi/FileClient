@@ -6,7 +6,7 @@ namespace Contrib\Component\File\FileHandler\Plain;
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class Iterator implements \Iterator
+class LineIterator implements \Iterator
 {
     /**
      * Current line number.
@@ -25,18 +25,18 @@ class Iterator implements \Iterator
     /**
      * Reader object.
      *
-     * @var \Contrib\Component\File\FileHandler\Plain\Reader
+     * @var \Contrib\Component\File\FileHandler\Plain\LineReaderInterface
      */
-    protected $reader;
+    protected $lineHandler;
 
     /**
      * Constructor.
      *
-     * @param resource $handle File handle.
+     * @param LineReaderInterface $lineHandler LineReader.
      */
-    public function __construct($handle)
+    public function __construct(LineReaderInterface $lineHandler)
     {
-        $this->reader = new Reader($handle);
+        $this->lineHandler = $lineHandler;
     }
 
     // Iterator interface
@@ -48,9 +48,9 @@ class Iterator implements \Iterator
      */
     public function rewind()
     {
-        $this->reader->seek(0);
+        $this->lineHandler->seek(0);
 
-        $this->line    = $this->reader->read();
+        $this->line    = $this->lineHandler->read();
         $this->numLine = 0;
     }
 
@@ -92,7 +92,7 @@ class Iterator implements \Iterator
     public function next()
     {
         if ($this->valid()) {
-            $this->line = $this->reader->read();
+            $this->line = $this->lineHandler->read();
 
             $this->numLine++;
         }

@@ -1,69 +1,47 @@
 <?php
 namespace Contrib\Component\File\Client\Plain;
 
-use Contrib\Component\File\Client\AbstractFileReader;
-use Contrib\Component\File\FileHandler\Plain\Reader as LineReader;
+use Contrib\Component\File\Client\BaseFileClient;
 
 /**
  * File reader.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class FileReader extends AbstractFileReader
+class FileReader extends BaseFileClient implements FileReaderInterface
 {
     // API
 
     /**
-     * Return file content (file_get_contents() function wrapper).
+     * {@inheritdoc}
      *
-     * @param boolean $explode Whether to explode by new line.
-     * @return string File contents
-     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     * @see \Contrib\Component\File\Client\Plain\FileReaderInterface::read()
      */
     public function read($explode = false)
     {
+        if (!isset($this->file)) {
+            throw new \RuntimeException('File is not set.');
+        }
+
         if ($this->file->isReadable()) {
             if ($explode) {
-                return file($this->file->getPath(), FILE_IGNORE_NEW_LINES);
+                $content = file($this->file->getPath(), FILE_IGNORE_NEW_LINES);
+            } else {
+                $content = file_get_contents($this->file->getPath());
             }
 
-            return file_get_contents($this->file->getPath());
+            // convert encoding
+            if ($this->options['convertEncoding']) {
+                return mb_convert_encoding(
+                    $content,
+                    $this->options['toEncoding'],
+                    $this->options['fromEncoding']
+                );
+            }
+
+            return $content;
         }
 
         return false;
-    }
-
-    /**
-     * Return file content (fgets() function wrapper).
-     *
-     * @param integer $length Length to read.
-     * @return array File content.
-     * @throws \RuntimeException Throw on failure if $throwException is set to true.
-     */
-    public function readLines($length = null)
-    {
-        if (!$this->initReader()) {
-            return false;
-        }
-
-        $lines = array();
-
-        while (false !== $line = $this->lineHandler->read($length)) {
-            $lines[] = $line;
-        }
-
-        return $lines;
-    }
-
-    // internal method
-
-    /**
-     * {@inheritdoc}
-     *
-     * @see \Contrib\Component\File\Client\AbstractFileReader::createLineReader()
-     */
-    protected function createLineReader($handle)
-    {
-        return new LineReader($handle);
     }
 }

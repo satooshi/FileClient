@@ -1,15 +1,14 @@
 <?php
 namespace Contrib\Component\File\Client;
 
-use Symfony\Component\Serializer\SerializerAwareInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * Abstract generic file client.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-abstract class AbstractGenericFileClient extends AbstractFileClient implements SerializerAwareInterface
+abstract class AbstractGenericFileClient extends AbstractFileClient
 {
     /**
      * @var Symfony\Component\Serializer\Serializer
@@ -17,22 +16,15 @@ abstract class AbstractGenericFileClient extends AbstractFileClient implements S
     protected $serializer;
 
     /**
-     * @var AbstractFileClient
-     */
-    protected $fileClient;
-
-    /**
-     * {@inheritdoc}
+     * Constructor.
      *
-     * @see \Symfony\Component\Serializer\SerializerAwareInterface::setSerializer()
+     * @param Symfony\Component\Serializer\Serializer $serializer Serializer.
+     * @param array                                   $options    Options.
      */
-    public function setSerializer(SerializerInterface $serializer)
+    public function __construct(Serializer $serializer, array $options = array())
     {
+        parent::__construct($options);
+
         $this->serializer = $serializer;
     }
-
-    /**
-     * Create file client.
-     */
-    abstract protected function createFileClient();
 }

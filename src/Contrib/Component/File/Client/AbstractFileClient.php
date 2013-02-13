@@ -1,8 +1,6 @@
 <?php
 namespace Contrib\Component\File\Client;
 
-use Contrib\Component\File\File;
-
 /**
  * Abstract file client.
  *
@@ -17,18 +15,6 @@ use Contrib\Component\File\File;
 abstract class AbstractFileClient
 {
     /**
-     * @var File
-     */
-    protected $file;
-
-    /**
-     * Line handler object.
-     *
-     * @var mixed
-     */
-    protected $lineHandler;
-
-    /**
      * Options.
      *
      * @var array
@@ -41,50 +27,63 @@ abstract class AbstractFileClient
      * @param string $path    File path.
      * @param array  $options Options.
      */
-    public function __construct($path, array $options = array())
+    public function __construct(array $options = array())
     {
-        $this->options = $options + array(
-            'newLine'              => PHP_EOL,
-            'throwException'       => true,
-            'autoDetectLineEnding' => true,
-        );
+        $this->options = $options + static::getDefaultOptions();
 
-        $this->file = new File($path, $this->options['throwException']);
+        ini_set('auto_detect_line_endings', $this->options['autoDetectLineEnding']);
+    }
+
+    // internal method
+
+    /**
+     * Trim line.
+     *
+     * @param string $line Triming string.
+     * @return string
+     */
+    protected function trimLine($line)
+    {
+        return trim(mb_convert_encoding($line, $this->options['toEncoding'], $this->options['fromEncoding']));
     }
 
     // accessor
 
     /**
-     * Return File object.
+     * Set options.
      *
-     * @return \Contrib\Component\File\File
+     * @param array $options Options.
+     * @return void
      */
-    public function getFile()
+    public function setOptions(array $options)
     {
-        return $this->file;
-    }
-
-    /**
-     * Return line handler.
-     *
-     * @return mixed
-     */
-    public function getLineHandler()
-    {
-        if (isset($this->lineHandler)) {
-            return $this->lineHandler;
-        }
-
-        return null;
+        $this->options = $options + $this->getDefaultOptions();
     }
 
     /**
      * Return options.
      *
-     * @return array
+     * @return array Options.
      */
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * Return defualt options.
+     *
+     * @return array Default options.
+     */
+    public static function getDefaultOptions()
+    {
+        return array(
+            'newLine'              => PHP_EOL,
+            'throwException'       => true,
+            'autoDetectLineEnding' => true,
+            'convertEncoding'      => true,
+            'toEncoding'           => 'UTF-8',
+            'fromEncoding'         => 'auto',
+        );
     }
 }

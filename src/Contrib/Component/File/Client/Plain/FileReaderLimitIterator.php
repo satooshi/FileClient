@@ -15,7 +15,7 @@ use Contrib\Component\File\Client\AbstractFileIterator;
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class FileReaderIterator extends AbstractFileIterator
+class FileReaderLimitIterator extends AbstractFileIterator
 {
     // API
 
@@ -28,7 +28,7 @@ class FileReaderIterator extends AbstractFileIterator
      */
     public function walk($callback)
     {
-        $this->iterate($callback);
+        $this->iterateLimit($callback, $this->options['limit']);
         $this->initSuspended();
 
         return $this->lineHandler;
@@ -37,14 +37,17 @@ class FileReaderIterator extends AbstractFileIterator
     // internal method
 
     /**
-     * Iterate iterator.
+     * Iterate iterator until limit excluding empty line count.
      *
-     * @param callable $callback
+     * @param callable  $callback
      * @param \Iterator $iterator
+     * @param integer   $limit
      * @return void
      */
-    protected function iterate($callback)
+    protected function iterateLimit($callback, $limit)
     {
+        $readLine = 0;
+
         foreach ($this->lineHandler as $numLine => $line) {
             if (is_string($line)) {
                 $line = $this->trimLine($line);
@@ -58,6 +61,12 @@ class FileReaderIterator extends AbstractFileIterator
             $items = $this->filterIteratedLine($line);
 
             if (false === $callback($items, $numLine)) {
+                return;
+            }
+
+            $readLine++;
+
+            if ($readLine === $limit) {
                 return;
             }
         }
