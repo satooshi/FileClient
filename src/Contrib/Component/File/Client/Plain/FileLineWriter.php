@@ -25,7 +25,7 @@ class FileLineWriter extends AbstractFileLineClient implements LineWriterInterfa
         $this->options     = $options + static::getDefaultOptions();
     }
 
-    // API
+    // LineWriterInterface
 
     /**
      * Write lines to file.
@@ -33,6 +33,8 @@ class FileLineWriter extends AbstractFileLineClient implements LineWriterInterfa
      * @param array   $line   Lines data to write.
      * @param integer $length Length to write.
      * @return integer Number of bytes written to the file.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     * @see \Contrib\Component\File\FileHandler\Plain\LineWriterInterface::write()
      */
     public function write($line, $length = null)
     {

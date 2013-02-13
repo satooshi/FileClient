@@ -18,7 +18,7 @@ class FileLineReader extends AbstractFileLineClient implements LineReaderInterfa
         $this->options     = $options + static::getDefaultOptions();
     }
 
-    // API
+    // LineReaderInterface
 
     /**
      * Return file content.
@@ -26,6 +26,7 @@ class FileLineReader extends AbstractFileLineClient implements LineReaderInterfa
      * @param integer $length Length to read.
      * @return array File content.
      * @throws \RuntimeException Throw on failure if $throwException is set to true.
+     * @see \Contrib\Component\File\FileHandler\Plain\LineReaderInterface::read()
      */
     public function read($length = null)
     {
