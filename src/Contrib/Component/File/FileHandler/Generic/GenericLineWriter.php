@@ -1,6 +1,7 @@
 <?php
 namespace Contrib\Component\File\FileHandler\Generic;
 
+use Contrib\Component\File\FileHandler\AbstractGenericFileHandler;
 use Contrib\Component\File\FileHandler\Plain\LineWriterInterface;
 use Symfony\Component\Serializer\Serializer;
 
@@ -9,22 +10,8 @@ use Symfony\Component\Serializer\Serializer;
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class GenericLineWriter implements LineWriterInterface
+class GenericLineWriter extends AbstractGenericFileHandler implements LineWriterInterface
 {
-    /**
-     * Writer object.
-     *
-     * @var Contrib\Component\File\FileHandler\Plain\LineWriterInterface
-     */
-    protected $lineHandler;
-
-    /**
-     * Serializer object.
-     *
-     * @var Symfony\Component\Serializer\Serializer
-     */
-    protected $serializer;
-
     /**
      * Constructor.
      *
@@ -56,20 +43,14 @@ class GenericLineWriter implements LineWriterInterface
     /**
      * {@inheritdoc}
      *
-     * @see \Contrib\Component\File\FileHandler\Plain\LineWriterInterface::seek()
+     * @see \Contrib\Component\File\SeekableFileInterface::seek()
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        return $this->lineHandler->seek($offset, $whence);
-    }
+        if (!$this->lineHandler->getFile()->isWritable()) {
+            return false;
+        }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @see \Contrib\Component\File\FileHandler\Plain\LineWriterInterface::getFile()
-     */
-    public function getFile()
-    {
-        return $this->lineHandler->getFile();
+        return $this->lineHandler->seek($offset, $whence);
     }
 }

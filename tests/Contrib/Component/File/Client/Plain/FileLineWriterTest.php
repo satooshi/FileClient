@@ -56,18 +56,18 @@ class FileLineWriterTest extends \PHPUnit_Framework_TestCase
         chmod($this->unwritablePath, 0577);
     }
 
-    // writeLines()
+    // write()
 
     /**
      * @test
      */
-    public function writeLines()
+    public function write()
     {
         $this->object = $this->createObject($this->path);
 
         $expected = strlen($this->content) + 1;
         $lines = explode("\n", $this->content);
-        $actual = $this->object->writeLines($lines);
+        $actual = $this->object->write($lines);
 
         $this->assertEquals($expected, $actual);
     }
@@ -75,27 +75,27 @@ class FileLineWriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function canNotWriteLinesIfPathIsNotWritable()
+    public function canNotWriteIfPathIsNotWritable()
     {
         $this->touchUnwritableFile();
 
         $this->object = $this->createObject($this->unwritablePath, false);
 
         $lines = explode("\n", $this->content);
-        $this->assertFalse($this->object->writeLines($lines));
+        $this->assertFalse($this->object->write($lines));
     }
 
     /**
      * @test
      * @expectedException RuntimeException
      */
-    public function throwRuntimeExceptionOnWriteLinesIfPathIsNotWritable()
+    public function throwRuntimeExceptionOnWriteIfPathIsNotWritable()
     {
         $this->touchUnwritableFile();
 
         $this->object = $this->createObject($this->unwritablePath);
 
         $lines = explode("\n", $this->content);
-        $this->object->writeLines($lines);
+        $this->object->write($lines);
     }
 }

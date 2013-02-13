@@ -1,6 +1,7 @@
 <?php
 namespace Contrib\Component\File\FileHandler;
 
+use Contrib\Component\File\SeekableFileInterface;
 use Contrib\Component\File\File;
 
 /**
@@ -8,7 +9,7 @@ use Contrib\Component\File\File;
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-abstract class AbstractFileHandler
+abstract class AbstractFileHandler implements SeekableFileInterface
 {
     /**
      * File.
@@ -71,13 +72,12 @@ abstract class AbstractFileHandler
         return true;
     }
 
+    // SeekableFileInterface
+
     /**
-     * Seek on a file pointer.
+     * {@inheritdoc}
      *
-     * @param integer $offset
-     * @param string  $whence
-     * @return boolean true on success, false on failure
-     * @throws \RuntimeException If file handle is not set.
+     * @see \Contrib\Component\File\SeekableFileInterface::seek()
      */
     public function seek($offset, $whence = SEEK_SET)
     {
@@ -88,17 +88,17 @@ abstract class AbstractFileHandler
         throw new \RuntimeException('File handle is not set.');
     }
 
-    // accessor
-
     /**
-     * Return file.
+     * {@inheritdoc}
      *
-     * @return \Contrib\Component\File\File
+     * @see \Contrib\Component\File\SeekableFileInterface::getFile()
      */
     public function getFile()
     {
         return $this->file;
     }
+
+    // accessor
 
     /**
      * Return options.

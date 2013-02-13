@@ -6,7 +6,6 @@ use Contrib\Component\File\FileHandler\Generic\GenericLineWriter;
 use Contrib\Component\File\Client\Plain\FileLineWriter;
 use Contrib\Component\File\Client\Plain\FileWriter;
 use Contrib\Component\File\Client\Generic\GenericFileWriter;
-use Contrib\Component\File\Client\Generic\GenericFileLineWriter;
 
 class WriterFactory extends AbstractFactory
 {
@@ -55,7 +54,7 @@ class WriterFactory extends AbstractFactory
     {
         $lineHandler = $this->createGenericLineWriter($path, $format, $options);
 
-        return new GenericFileLineWriter($lineHandler, $options);
+        return new FileLineWriter($lineHandler, $options);
     }
 
     // generic file client

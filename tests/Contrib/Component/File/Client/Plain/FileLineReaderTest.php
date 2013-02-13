@@ -54,17 +54,17 @@ class FileLineReaderTest extends \PHPUnit_Framework_TestCase
         chmod($this->unreadablePath, 0377);
     }
 
-    // readLines()
+    // read()
 
     /**
      * @test
      */
-    public function readLines()
+    public function read()
     {
         $this->object = $this->createObject($this->path);
 
         $expected = array("hello\n", "world!");
-        $actual = $this->object->readLines();
+        $actual = $this->object->read();
 
         $this->assertEquals($expected, $actual);
     }
@@ -72,26 +72,26 @@ class FileLineReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function canNotReadLinesIfPathIsNotReadable()
+    public function canNotReadIfPathIsNotReadable()
     {
         $this->touchUnreadableFile();
 
         $this->object = $this->createObject($this->unreadablePath, false);
 
-        $this->assertFalse($this->object->readLines());
+        $this->assertFalse($this->object->read());
     }
 
     /**
      * @test
      * @expectedException RuntimeException
      */
-    public function throwRuntimeExceptionOnReadLinesIfPathIsNotReadable()
+    public function throwRuntimeExceptionOnReadIfPathIsNotReadable()
     {
         $this->touchUnreadableFile();
 
         $this->object = $this->createObject($this->unreadablePath);
 
-        $this->object->readLines();
+        $this->object->read();
     }
 
     // getOptions()

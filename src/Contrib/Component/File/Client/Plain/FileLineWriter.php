@@ -1,10 +1,10 @@
 <?php
 namespace Contrib\Component\File\Client\Plain;
 
-use Contrib\Component\File\Client\AbstractFileClient;
+use Contrib\Component\File\Client\AbstractFileLineClient;
 use Contrib\Component\File\FileHandler\Plain\LineWriterInterface;
 
-class FileLineWriter extends AbstractFileClient
+class FileLineWriter extends AbstractFileLineClient implements LineWriterInterface
 {
     /**
      * Line writer.
@@ -30,32 +30,33 @@ class FileLineWriter extends AbstractFileClient
     /**
      * Write lines to file.
      *
-     * @param array   $lines  Lines data to write.
+     * @param array   $line   Lines data to write.
      * @param integer $length Length to write.
      * @return integer Number of bytes written to the file.
      */
-    public function writeLines(array $lines, $length = null)
+    public function write($line, $length = null)
     {
         if (!$this->lineHandler->getFile()->isWritable()) {
             return false;
         }
 
+        if (!is_array($line)) {
+            throw new \InvalidArgumentException('line must be a lines data array.');
+        }
+
         $bytes = 0;
 
-        foreach ($lines as $line) {
-            $bytes += $this->lineHandler->write($line, $length);
+        foreach ($line as $str) {
+            $bytes += $this->lineHandler->write($str, $length);
         }
 
         return $bytes;
     }
 
     /**
-     * Seek on a file pointer.
+     * {@inheritdoc}
      *
-     * @param integer $offset
-     * @param string  $whence
-     * @return boolean true on success, false on failure.
-     * @throws \RuntimeException If file handle is not set.
+     * @see \Contrib\Component\File\SeekableFileInterface::seek()
      */
     public function seek($offset, $whence = SEEK_SET)
     {

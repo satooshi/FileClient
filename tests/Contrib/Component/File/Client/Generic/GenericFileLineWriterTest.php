@@ -61,17 +61,17 @@ class GenericFileLineWriterTest extends \PHPUnit_Framework_TestCase
         chmod($this->unwritablePath, 0577);
     }
 
-    // writeLinesAs()
+    // write()
 
     /**
      * @test
      */
-    public function writeLinesAsJson()
+    public function writeAsJson()
     {
         $expected = '{"id":1,"name":"hoge"}' . PHP_EOL;
 
         $this->object = $this->createObject($this->path, 'json');
-        $this->object->writeLinesAs($this->content);
+        $this->object->write($this->content);
 
         $actual = file_get_contents($this->path);
 
@@ -81,11 +81,11 @@ class GenericFileLineWriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function appendLinesAsJson()
+    public function appendAsJson()
     {
         $this->object = $this->createObject($this->path, 'json');
-        $this->object->writeLinesAs($this->content);
-        $this->object->writeLinesAs($this->content);
+        $this->object->write($this->content);
+        $this->object->write($this->content);
 
         $data = '{"id":1,"name":"hoge"}' . PHP_EOL;
         $expected = $data . $data;
@@ -97,13 +97,13 @@ class GenericFileLineWriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function overwriteLinesAsJson()
+    public function overwriteAsJson()
     {
         $this->object = $this->createObject($this->path, 'json');
-        $this->object->writeLinesAs($this->content);
+        $this->object->write($this->content);
 
         $this->object = $this->createObject($this->path, 'json');
-        $this->object->writeLinesAs($this->content);
+        $this->object->write($this->content);
 
         $expected = '{"id":1,"name":"hoge"}' . PHP_EOL;
         $actual = file_get_contents($this->path);
@@ -114,12 +114,12 @@ class GenericFileLineWriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function canNotWriteLinesAsJsonIfPathIsNotWritable()
+    public function canNotWriteAsJsonIfPathIsNotWritable()
     {
         $this->touchUnwritableFile();
 
         $this->object = $this->createObject($this->unwritablePath, 'json', false);
-        $actual = $this->object->writeLinesAs($this->content);
+        $actual = $this->object->write($this->content);
 
         $this->assertFalse($actual);
     }
@@ -128,11 +128,11 @@ class GenericFileLineWriterTest extends \PHPUnit_Framework_TestCase
      * @test
      * @expectedException RuntimeException
      */
-    public function throwRuntimeExceptionOnWriteLinesAsJsonIfPathIsNotWritable()
+    public function throwRuntimeExceptionOnWriteAsJsonIfPathIsNotWritable()
     {
         $this->touchUnwritableFile();
 
         $this->object = $this->createObject($this->unwritablePath, 'json');
-        $this->object->writeLinesAs($this->content);
+        $this->object->write($this->content);
     }
 }

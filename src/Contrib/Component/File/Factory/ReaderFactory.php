@@ -5,7 +5,6 @@ use Contrib\Component\File\FileHandler\Plain\LineReader;
 use Contrib\Component\File\FileHandler\Generic\GenericLineReader;
 use Contrib\Component\File\Client\Plain\FileLineReader;
 use Contrib\Component\File\Client\Plain\FileReader;
-use Contrib\Component\File\Client\Generic\GenericFileLineReader;
 use Contrib\Component\File\Client\Generic\GenericFileReader;
 
 class ReaderFactory extends AbstractFactory
@@ -42,7 +41,7 @@ class ReaderFactory extends AbstractFactory
     {
         $lineHandler = $this->createGenericLineReader($path, $format, $type, $options);
 
-        return new GenericFileLineReader($lineHandler, $options);
+        return new FileLineReader($lineHandler, $options);
     }
 
     // file reader

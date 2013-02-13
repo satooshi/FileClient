@@ -1,6 +1,8 @@
 <?php
 namespace Contrib\Component\File\FileHandler\Generic;
 
+use Contrib\Component\File\FileHandler\AbstractGenericFileHandler;
+
 use Contrib\Component\File\FileHandler\Plain\LineReaderInterface;
 use Contrib\Component\File\FileHandler\Plain\LineReader;
 use Symfony\Component\Serializer\Serializer;
@@ -10,29 +12,8 @@ use Symfony\Component\Serializer\Serializer;
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class GenericLineReader implements LineReaderInterface
+class GenericLineReader extends AbstractGenericFileHandler implements LineReaderInterface
 {
-    /**
-     * Reader object.
-     *
-     * @var Contrib\Component\File\FileHandler\Plain\LineReaderInterface
-     */
-    protected $lineHandler;
-
-    /**
-     * Serializer object.
-     *
-     * @var Symfony\Component\Serializer\Serializer
-     */
-    protected $serializer;
-
-    /**
-     * File format.
-     *
-     * @var string
-     */
-    protected $format;
-
     /**
      * Deserializing class name.
      *
@@ -59,10 +40,9 @@ class GenericLineReader implements LineReaderInterface
     // LineReaderInterface
 
     /**
-     * Return file line (fgets() function wrapper).
+     * {@inheritdoc}
      *
-     * @param integer $length Length to read.
-     * @return array Deserialized data.
+     * @see \Contrib\Component\File\FileHandler\Plain\LineReaderInterface::read()
      */
     public function read($length = null)
     {
@@ -82,20 +62,14 @@ class GenericLineReader implements LineReaderInterface
     /**
      * {@inheritdoc}
      *
-     * @see \Contrib\Component\File\FileHandler\Plain\LineReaderInterface::seek()
+     * @see \Contrib\Component\File\SeekableFileInterface::seek()
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        return $this->lineHandler->seek($offset, $whence);
-    }
+        if (!$this->lineHandler->getFile()->isReadable()) {
+            return false;
+        }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @see \Contrib\Component\File\FileHandler\Plain\LineReaderInterface::getFile()
-     */
-    public function getFile()
-    {
-        return $this->lineHandler->getFile();
+        return $this->lineHandler->seek($offset, $whence);
     }
 }

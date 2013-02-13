@@ -57,12 +57,12 @@ class GenericFileLineReaderTest extends \PHPUnit_Framework_TestCase
         chmod($this->unreadablePath, 0377);
     }
 
-    // readLinesAs()
+    // read()
 
     /**
      * @test
      */
-    public function readLinesAsJson()
+    public function readAsJson()
     {
         $this->object = $this->createObject($this->path, 'json');
 
@@ -73,7 +73,7 @@ class GenericFileLineReaderTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $actual = $this->object->readLinesAs();
+        $actual = $this->object->read();
 
         $this->assertEquals($expected, $actual);
     }
@@ -81,7 +81,7 @@ class GenericFileLineReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function canNotReadLinesAsJsonIfPathIsNotReadable()
+    public function canNotReadAsJsonIfPathIsNotReadable()
     {
         $this->touchUnreadableFile();
 
@@ -89,7 +89,7 @@ class GenericFileLineReaderTest extends \PHPUnit_Framework_TestCase
 
         $this->object = $this->createObject($this->unreadablePath, 'json', $className, false);
 
-        $actual = $this->object->readLinesAs();
+        $actual = $this->object->read();
 
         $this->assertFalse($actual);
     }
@@ -98,7 +98,7 @@ class GenericFileLineReaderTest extends \PHPUnit_Framework_TestCase
      * @test
      * @expectedException RuntimeException
      */
-    public function throwRuntimeExceptionOnReadLinesAsJsonIfPathIsNotReadable()
+    public function throwRuntimeExceptionOnReadAsJsonIfPathIsNotReadable()
     {
         $this->touchUnreadableFile();
 
@@ -106,6 +106,6 @@ class GenericFileLineReaderTest extends \PHPUnit_Framework_TestCase
 
         $this->object = $this->createObject($this->unreadablePath, 'json', $className, true);
 
-        $this->object->readLinesAs();
+        $this->object->read();
     }
 }

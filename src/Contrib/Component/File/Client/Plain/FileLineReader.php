@@ -1,18 +1,11 @@
 <?php
 namespace Contrib\Component\File\Client\Plain;
 
-use Contrib\Component\File\Client\AbstractFileClient;
+use Contrib\Component\File\Client\AbstractFileLineClient;
 use Contrib\Component\File\FileHandler\Plain\LineReaderInterface;
 
-class FileLineReader extends AbstractFileClient
+class FileLineReader extends AbstractFileLineClient implements LineReaderInterface
 {
-    /**
-     * Line reader.
-     *
-     * @var Contrib\Component\File\FileHandler\Plain\LineReaderInterface
-     */
-    protected $lineHandler;
-
     /**
      * Constructor.
      *
@@ -34,7 +27,7 @@ class FileLineReader extends AbstractFileClient
      * @return array File content.
      * @throws \RuntimeException Throw on failure if $throwException is set to true.
      */
-    public function readLines($length = null)
+    public function read($length = null)
     {
         if (!$this->lineHandler->getFile()->isReadable()) {
             return false;
@@ -50,12 +43,9 @@ class FileLineReader extends AbstractFileClient
     }
 
     /**
-     * Seek on a file pointer.
+     * {@inheritdoc}
      *
-     * @param integer $offset
-     * @param string  $whence
-     * @return boolean true on success, false on failure.
-     * @throws \RuntimeException If file handle is not set.
+     * @see \Contrib\Component\File\SeekableFileInterface::seek()
      */
     public function seek($offset, $whence = SEEK_SET)
     {
