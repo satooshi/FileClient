@@ -6,11 +6,11 @@ require_once 'SerializableEntity.php';
 use Contrib\Component\File\Factory\WriterFactory;
 
 /**
- * Generic file appender.
+ * Generic file writer.
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
+class GenericFileLineWriterTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -42,12 +42,13 @@ class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    protected function createObject($path, $throwException = true)
+
+    protected function createObject($path, $format, $throwException = true)
     {
         $options = array('throwException' => $throwException);
         $factory = new WriterFactory();
 
-        return $factory->createGenericFileAppender($path, $options);
+        return $factory->createGenericFileLineWriter($path, $format, $options);
     }
 
     protected function touchUnwritableFile()
@@ -60,17 +61,18 @@ class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
         chmod($this->unwritablePath, 0577);
     }
 
-    // writeAs()
+    // writeLinesAs()
 
     /**
      * @test
      */
-    public function writeAsJson()
+    public function writeLinesAsJson()
     {
-        $this->object = $this->createObject($this->path);
-        $this->object->writeAs($this->content, 'json');
+        $expected = '{"id":1,"name":"hoge"}' . PHP_EOL;
 
-        $expected = '{"id":1,"name":"hoge"}';
+        $this->object = $this->createObject($this->path, 'json');
+        $this->object->writeLinesAs($this->content);
+
         $actual = file_get_contents($this->path);
 
         $this->assertEquals($expected, $actual);
@@ -79,13 +81,13 @@ class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function appendAsJson()
+    public function appendLinesAsJson()
     {
-        $this->object = $this->createObject($this->path);
-        $this->object->writeAs($this->content, 'json');
-        $this->object->writeAs($this->content, 'json');
+        $this->object = $this->createObject($this->path, 'json');
+        $this->object->writeLinesAs($this->content);
+        $this->object->writeLinesAs($this->content);
 
-        $data = '{"id":1,"name":"hoge"}';
+        $data = '{"id":1,"name":"hoge"}' . PHP_EOL;
         $expected = $data . $data;
         $actual = file_get_contents($this->path);
 
@@ -95,16 +97,15 @@ class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function appendAsJsonToExistingFile()
+    public function overwriteLinesAsJson()
     {
-        $this->object = $this->createObject($this->path);
-        $this->object->writeAs($this->content, 'json');
+        $this->object = $this->createObject($this->path, 'json');
+        $this->object->writeLinesAs($this->content);
 
-        $this->object = $this->createObject($this->path);
-        $this->object->writeAs($this->content, 'json');
+        $this->object = $this->createObject($this->path, 'json');
+        $this->object->writeLinesAs($this->content);
 
-        $data = '{"id":1,"name":"hoge"}';
-        $expected = $data . $data;
+        $expected = '{"id":1,"name":"hoge"}' . PHP_EOL;
         $actual = file_get_contents($this->path);
 
         $this->assertEquals($expected, $actual);
@@ -113,12 +114,12 @@ class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function canNotWriteAsJsonIfPathIsNotWritable()
+    public function canNotWriteLinesAsJsonIfPathIsNotWritable()
     {
         $this->touchUnwritableFile();
 
-        $this->object = $this->createObject($this->unwritablePath, false);
-        $actual = $this->object->writeAs($this->content, 'json');
+        $this->object = $this->createObject($this->unwritablePath, 'json', false);
+        $actual = $this->object->writeLinesAs($this->content);
 
         $this->assertFalse($actual);
     }
@@ -127,11 +128,11 @@ class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
      * @test
      * @expectedException RuntimeException
      */
-    public function throwRuntimeExceptionOnWriteAsJsonIfPathIsNotWritable()
+    public function throwRuntimeExceptionOnWriteLinesAsJsonIfPathIsNotWritable()
     {
         $this->touchUnwritableFile();
 
-        $this->object = $this->createObject($this->unwritablePath);
-        $this->object->writeAs($this->content, 'json');
+        $this->object = $this->createObject($this->unwritablePath, 'json');
+        $this->object->writeLinesAs($this->content);
     }
 }

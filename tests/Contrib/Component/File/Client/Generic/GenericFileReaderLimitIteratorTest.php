@@ -12,7 +12,7 @@ use Contrib\Component\File\Factory\ReaderIteratorFactory;
  *
  * @author Kitamura Satoshi <with.no.parachute@gmail.com>
  */
-class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
+class GenericFileReaderLimitIteratorTest extends \PHPUnit_Framework_TestCase
 {
     protected $object;
 
@@ -40,7 +40,7 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    protected function createObject($path, $format, $type = null, $throwException = true, $skipEmptyCount = true, $limit = 0, $offset = 0)
+    protected function createObject($path, $format, $type = null, $throwException = true, $skipEmptyCount = false, $limit = 0, $offset = 0)
     {
         $options = array(
             'throwException' => $throwException,
@@ -84,7 +84,7 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function walkAsJsonLimit1()
     {
-        $this->object = $this->createObject($this->path, 'json', null, true, true, 1);
+        $this->object = $this->createObject($this->path, 'json', null, true, false, 1);
 
         $actual = $this->object->walk(function(){});
 
@@ -97,7 +97,7 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function walkAsJsonLimit3()
     {
-        $this->object = $this->createObject($this->path, 'json', null, true, true, 3);
+        $this->object = $this->createObject($this->path, 'json', null, true, false, 3);
 
         $actual = $this->object->walk(function(){});
 
@@ -151,7 +151,7 @@ class GenericFileReaderIteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function stopWalkAsJsonLimitIfCallbackReturnFalse()
     {
-        $this->object = $this->createObject($this->path, 'json', null, true, true, 10);
+        $this->object = $this->createObject($this->path, 'json', null, true, false, 10);
 
         $actual = $this->object->walk(
             function () {

@@ -56,7 +56,7 @@ class ReaderFactory extends AbstractFactory
 
     public function createGenericFileReader($path, array $options = array())
     {
-        $fileClient = $this->createFileReader($path);
+        $fileClient = $this->createFileReader($path, $options);
         $serializer = $this->createSerializer();
 
         return new GenericFileReader($fileClient, $serializer, $options);

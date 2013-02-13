@@ -1,8 +1,9 @@
 <?php
 namespace Contrib\Component\File\Client\Generic;
 
-use Contrib\Component\Serializer\Factory;
-use Symfony\Component\Serializer\Serializer;
+require_once 'SerializableEntity.php';
+
+use Contrib\Component\File\Factory\WriterFactory;
 
 /**
  * Generic file writer.
@@ -44,16 +45,10 @@ class GenericFileWriterTest extends \PHPUnit_Framework_TestCase
 
     protected function createObject($path, $throwException = true)
     {
-        $serializer = Factory::createSerializer();
-        $object = $this->createObjectWithoutSerializer($path, $throwException);
-        $object->setSerializer($serializer);
+        $options = array('throwException' => $throwException);
+        $factory = new WriterFactory();
 
-        return $object;
-    }
-
-    protected function createObjectWithoutSerializer($path, $throwException = true)
-    {
-        return new GenericFileWriter($path, array('throwException' => $throwException));
+        return $factory->createGenericFileWriter($path, $options);
     }
 
     protected function touchUnwritableFile()
@@ -137,100 +132,5 @@ class GenericFileWriterTest extends \PHPUnit_Framework_TestCase
 
         $this->object = $this->createObject($this->unwritablePath);
         $this->object->writeAs($this->content, 'json');
-    }
-
-    /**
-     * @test
-     * @expectedException RuntimeException
-     */
-    public function throwRuntimeExceptionOnWriteAsJsonIfSerializerNotSet()
-    {
-        $this->object = $this->createObjectWithoutSerializer($this->path);
-        $this->object->writeAs($this->content, 'json');
-    }
-
-    // writeLinesAs()
-
-    /**
-     * @test
-     */
-    public function writeLinesAsJson()
-    {
-        $expected = '{"id":1,"name":"hoge"}' . PHP_EOL;
-
-        $this->object = $this->createObject($this->path);
-        $this->object->writeLinesAs($this->content, 'json');
-
-        $actual = file_get_contents($this->path);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @test
-     */
-    public function appendLinesAsJson()
-    {
-        $this->object = $this->createObject($this->path);
-        $this->object->writeLinesAs($this->content, 'json');
-        $this->object->writeLinesAs($this->content, 'json');
-
-        $data = '{"id":1,"name":"hoge"}' . PHP_EOL;
-        $expected = $data . $data;
-        $actual = file_get_contents($this->path);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @test
-     */
-    public function overwriteLinesAsJson()
-    {
-        $this->object = $this->createObject($this->path);
-        $this->object->writeLinesAs($this->content, 'json');
-
-        $this->object = $this->createObject($this->path);
-        $this->object->writeLinesAs($this->content, 'json');
-
-        $expected = '{"id":1,"name":"hoge"}' . PHP_EOL;
-        $actual = file_get_contents($this->path);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @test
-     */
-    public function canNotWriteLinesAsJsonIfPathIsNotWritable()
-    {
-        $this->touchUnwritableFile();
-
-        $this->object = $this->createObject($this->unwritablePath, false);
-        $actual = $this->object->writeLinesAs($this->content, 'json');
-
-        $this->assertFalse($actual);
-    }
-
-    /**
-     * @test
-     * @expectedException RuntimeException
-     */
-    public function throwRuntimeExceptionOnWriteLinesAsJsonIfPathIsNotWritable()
-    {
-        $this->touchUnwritableFile();
-
-        $this->object = $this->createObject($this->unwritablePath);
-        $this->object->writeLinesAs($this->content, 'json');
-    }
-
-    /**
-     * @test
-     * @expectedException RuntimeException
-     */
-    public function throwRuntimeExceptionOnWriteLinesAsJsonIfSerializerNotSet()
-    {
-        $this->object = $this->createObjectWithoutSerializer($this->path);
-        $this->object->writeLinesAs($this->content, 'json');
     }
 }

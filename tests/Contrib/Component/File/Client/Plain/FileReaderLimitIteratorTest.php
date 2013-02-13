@@ -132,9 +132,11 @@ class FileReaderLimitIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObject($this->path);
 
-        $actual = $this->object->walk(function(){
-            return false;
-        });
+        $actual = $this->object->walk(
+            function () {
+                return false;
+            }
+        );
 
         $this->assertTrue($this->object->isSuspended());
     }
@@ -146,9 +148,11 @@ class FileReaderLimitIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObject($this->path, true, false, 10);
 
-        $actual = $this->object->walk(function(){
-            return false;
-        });
+        $actual = $this->object->walk(
+            function(){
+                return false;
+            }
+        );
 
         $this->assertTrue($this->object->isSuspended());
     }

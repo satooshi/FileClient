@@ -13,6 +13,7 @@ class LineReaderTest extends \PHPUnit_Framework_TestCase
     protected $object;
 
     protected $path = 'hello.txt';
+    protected $unreadablePath = './unreadable';
     protected $content;
 
     protected function setUp()
@@ -29,6 +30,9 @@ class LineReaderTest extends \PHPUnit_Framework_TestCase
     {
         if (is_file($this->path)) {
             unlink($this->path);
+        }
+        if (is_file($this->unreadablePath)) {
+            unlink($this->unreadablePath);
         }
 
         // destruct
@@ -80,9 +84,22 @@ class LineReaderTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = $this->createObject($this->path);
 
-        $expected = 0;
-        $actual   = $this->object->seek(0);
+        $actual = $this->object->seek(0);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertTrue($actual);
+    }
+
+    /**
+     * @test
+     * @expectedException RuntimeException
+     */
+    public function throwRuntimeExceptionOnSeekIfPathIsNotReadable()
+    {
+        $options = array('throwException' => false);
+        $this->object = $this->createObject($this->unreadablePath, $options);
+
+        $actual = $this->object->seek(0);
+
+        $this->assertFalse($actual);
     }
 }
