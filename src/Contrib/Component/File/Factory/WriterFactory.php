@@ -59,11 +59,11 @@ class WriterFactory extends AbstractFactory
 
     // generic file client
 
-    public function createGenericFileWriter($path, array $options = array())
+    public function createGenericFileWriter($path, $format, array $options = array())
     {
         $fileClient = $this->createFileWriter($path, $options);
         $serializer = $this->createSerializer();
 
-        return new GenericFileWriter($fileClient, $serializer, $options);
+        return new GenericFileWriter($fileClient, $serializer, $format);
     }
 }

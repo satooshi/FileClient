@@ -21,6 +21,18 @@ abstract class AbstractGenericFileHandler implements SeekableFileInterface
      */
     protected $format;
 
+    // SeekableFileInterface
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Contrib\Component\File\SeekableFileInterface::seek()
+     */
+    public function seek($offset, $whence = SEEK_SET)
+    {
+        return $this->lineHandler->seek($offset, $whence);
+    }
+
     /**
      * {@inheritdoc}
      *

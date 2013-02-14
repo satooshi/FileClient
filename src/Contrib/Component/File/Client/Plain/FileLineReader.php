@@ -42,18 +42,4 @@ class FileLineReader extends AbstractFileLineClient implements LineReaderInterfa
 
         return $lines;
     }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @see \Contrib\Component\File\SeekableFileInterface::seek()
-     */
-    public function seek($offset, $whence = SEEK_SET)
-    {
-        if (!$this->lineHandler->getFile()->isReadable()) {
-            return false;
-        }
-
-        return $this->lineHandler->seek($offset, $whence);
-    }
 }

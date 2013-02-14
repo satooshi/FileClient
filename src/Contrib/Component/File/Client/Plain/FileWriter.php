@@ -10,7 +10,7 @@ use Contrib\Component\File\Client\BaseFileClient;
  */
 class FileWriter extends BaseFileClient implements FileWriterInterface
 {
-    // API
+    // FileWriterInterface
 
     /**
      * {@inheritdoc}

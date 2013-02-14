@@ -42,12 +42,12 @@ class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    protected function createObject($path, $throwException = true)
+    protected function createObject($path, $format, $throwException = true)
     {
         $options = array('throwException' => $throwException);
         $factory = new AppenderFactory();
 
-        return $factory->createGenericFileAppender($path, $options);
+        return $factory->createGenericFileAppender($path, $format, $options);
     }
 
     protected function touchUnwritableFile()
@@ -60,15 +60,15 @@ class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
         chmod($this->unwritablePath, 0577);
     }
 
-    // writeAs()
+    // write()
 
     /**
      * @test
      */
     public function writeAsJson()
     {
-        $this->object = $this->createObject($this->path);
-        $this->object->writeAs($this->content, 'json');
+        $this->object = $this->createObject($this->path, 'json');
+        $this->object->write($this->content);
 
         $expected = '{"id":1,"name":"hoge"}';
         $actual = file_get_contents($this->path);
@@ -81,9 +81,9 @@ class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
      */
     public function appendAsJson()
     {
-        $this->object = $this->createObject($this->path);
-        $this->object->writeAs($this->content, 'json');
-        $this->object->writeAs($this->content, 'json');
+        $this->object = $this->createObject($this->path, 'json');
+        $this->object->write($this->content);
+        $this->object->write($this->content);
 
         $data = '{"id":1,"name":"hoge"}';
         $expected = $data . $data;
@@ -97,11 +97,11 @@ class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
      */
     public function appendAsJsonToExistingFile()
     {
-        $this->object = $this->createObject($this->path);
-        $this->object->writeAs($this->content, 'json');
+        $this->object = $this->createObject($this->path, 'json');
+        $this->object->write($this->content);
 
-        $this->object = $this->createObject($this->path);
-        $this->object->writeAs($this->content, 'json');
+        $this->object = $this->createObject($this->path, 'json');
+        $this->object->write($this->content);
 
         $data = '{"id":1,"name":"hoge"}';
         $expected = $data . $data;
@@ -117,8 +117,8 @@ class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
     {
         $this->touchUnwritableFile();
 
-        $this->object = $this->createObject($this->unwritablePath, false);
-        $actual = $this->object->writeAs($this->content, 'json');
+        $this->object = $this->createObject($this->unwritablePath, 'json', false);
+        $actual = $this->object->write($this->content);
 
         $this->assertFalse($actual);
     }
@@ -131,7 +131,7 @@ class GenericFileAppenderTest extends \PHPUnit_Framework_TestCase
     {
         $this->touchUnwritableFile();
 
-        $this->object = $this->createObject($this->unwritablePath);
-        $this->object->writeAs($this->content, 'json');
+        $this->object = $this->createObject($this->unwritablePath, 'json');
+        $this->object->write($this->content);
     }
 }

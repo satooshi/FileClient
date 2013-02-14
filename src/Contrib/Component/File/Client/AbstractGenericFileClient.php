@@ -10,8 +10,17 @@ use Symfony\Component\Serializer\Serializer;
  */
 abstract class AbstractGenericFileClient extends AbstractFileClient
 {
+    protected $fileClient;
+
     /**
      * @var Symfony\Component\Serializer\Serializer
      */
     protected $serializer;
+
+    /**
+     * File format.
+     *
+     * @var string
+     */
+    protected $format;
 }

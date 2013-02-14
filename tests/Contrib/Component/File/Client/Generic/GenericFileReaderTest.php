@@ -38,13 +38,13 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    protected function createObject($path, $throwException = true)
+    protected function createObject($path, $format, $type = null, $throwException = true)
     {
         $options = array('throwException' => $throwException);
 
         $factory = new ReaderFactory();
 
-        return $factory->createGenericFileReader($path, $options);
+        return $factory->createGenericFileReader($path, $format, $type, $options);
     }
 
     protected function touchUnreadableFile()
@@ -57,20 +57,20 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
         chmod($this->unreadablePath, 0377);
     }
 
-    // readAs()
+    // read()
 
     /**
      * @test
      */
     public function readAsJson()
     {
-        $this->object = $this->createObject($this->path);
+        $this->object = $this->createObject($this->path, 'json');
 
         $expected = array(
             'id'   => 1,
             'name' => 'hoge',
         );
-        $actual = $this->object->readAs('json');
+        $actual = $this->object->read();
 
         $this->assertEquals($expected, $actual);
     }
@@ -80,10 +80,10 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function readAsJsonEntity()
     {
-        $this->object = $this->createObject($this->path);
-
         $className = 'Contrib\Component\File\Client\Generic\SerializableEntity';
-        $actual = $this->object->readAs('json', $className);
+        $this->object = $this->createObject($this->path, 'json', $className);
+
+        $actual = $this->object->read();
 
         $this->assertInstanceOf($className, $actual);
         $this->assertEquals(1, $actual->getId());
@@ -97,10 +97,10 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
     {
         $this->touchUnreadableFile();
 
-        $this->object = $this->createObject($this->unreadablePath, false);
-
         $className = 'Contrib\Component\File\Client\Generic\SerializableEntity';
-        $actual = $this->object->readAs('json', $className);
+        $this->object = $this->createObject($this->unreadablePath, 'json', $className, false);
+
+        $actual = $this->object->read();
 
         $this->assertFalse($actual);
     }
@@ -113,10 +113,9 @@ class GenericFileReaderTest extends \PHPUnit_Framework_TestCase
     {
         $this->touchUnreadableFile();
 
-        $this->object = $this->createObject($this->unreadablePath, true);
-
         $className = 'Contrib\Component\File\Client\Generic\SerializableEntity';
+        $this->object = $this->createObject($this->unreadablePath, 'json', $className, true);
 
-        $this->object->readAs('json', $className);
+        $this->object->read();
     }
 }

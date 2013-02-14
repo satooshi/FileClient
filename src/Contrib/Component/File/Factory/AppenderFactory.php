@@ -59,11 +59,11 @@ class AppenderFactory extends AbstractFactory
 
     // generic file client
 
-    public function createGenericFileAppender($path, array $options = array())
+    public function createGenericFileAppender($path, $format, array $options = array())
     {
         $fileClient = $this->createFileAppender($path, $options);
         $serializer = $this->createSerializer();
 
-        return new GenericFileWriter($fileClient, $serializer, $options);
+        return new GenericFileWriter($fileClient, $serializer, $format);
     }
 }

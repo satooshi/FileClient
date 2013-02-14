@@ -10,7 +10,7 @@ use Contrib\Component\File\Client\BaseFileClient;
  */
 class FileReader extends BaseFileClient implements FileReaderInterface
 {
-    // API
+    // FileReaderInterface
 
     /**
      * {@inheritdoc}
@@ -37,10 +37,13 @@ class FileReader extends BaseFileClient implements FileReaderInterface
         return $content;
     }
 
+    // API
+
     /**
-     * {@inheritdoc}
+     * Return file content exploded by new line.
      *
-     * @see \Contrib\Component\File\Client\Plain\FileReaderInterface::readLines()
+     * @return array File contents.
+     * @throws \RuntimeException Throw on failure if $throwException is set to true.
      */
     public function readLines()
     {

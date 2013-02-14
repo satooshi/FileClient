@@ -39,18 +39,4 @@ class GenericLineWriter extends AbstractGenericFileHandler implements LineWriter
 
         return $this->lineHandler->write($serialized, $length);
     }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @see \Contrib\Component\File\SeekableFileInterface::seek()
-     */
-    public function seek($offset, $whence = SEEK_SET)
-    {
-        if (!$this->lineHandler->getFile()->isWritable()) {
-            return false;
-        }
-
-        return $this->lineHandler->seek($offset, $whence);
-    }
 }

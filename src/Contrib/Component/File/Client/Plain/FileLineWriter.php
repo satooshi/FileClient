@@ -7,13 +7,6 @@ use Contrib\Component\File\FileHandler\Plain\LineWriterInterface;
 class FileLineWriter extends AbstractFileLineClient implements LineWriterInterface
 {
     /**
-     * Line writer.
-     *
-     * @var Contrib\Component\File\FileHandler\Plain\LineWriterInterface
-     */
-    protected $lineHandler;
-
-    /**
      * Constructor.
      *
      * @param LineWriterInterface $lineHandler LineWriter.
@@ -53,19 +46,5 @@ class FileLineWriter extends AbstractFileLineClient implements LineWriterInterfa
         }
 
         return $bytes;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @see \Contrib\Component\File\SeekableFileInterface::seek()
-     */
-    public function seek($offset, $whence = SEEK_SET)
-    {
-        if (!$this->lineHandler->getFile()->isWritable()) {
-            return false;
-        }
-
-        return $this->lineHandler->seek($offset, $whence);
     }
 }

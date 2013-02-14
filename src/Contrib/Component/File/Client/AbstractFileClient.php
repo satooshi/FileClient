@@ -48,17 +48,6 @@ abstract class AbstractFileClient
     // accessor
 
     /**
-     * Set options.
-     *
-     * @param array $options Options.
-     * @return void
-     */
-    public function setOptions(array $options)
-    {
-        $this->options = $options + $this->getDefaultOptions();
-    }
-
-    /**
      * Return options.
      *
      * @return array Options.
